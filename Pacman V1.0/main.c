@@ -89,7 +89,7 @@ void close()
 	SDL_Quit();
 }
 
-int** generate_map() //TODO utworz oddzielna funkcje renderujaca, moze renderMap()?
+int** generateMap() //TODO utworz oddzielna funkcje renderujaca, moze renderMap()?
 {
 	/*
 	* Dimensions of elements on the screen
@@ -143,6 +143,11 @@ int** generate_map() //TODO utworz oddzielna funkcje renderujaca, moze renderMap
 		}
 	}
 
+	return logicMap;
+}
+
+void renderMap(int** logicMap)
+{
 	//Clear screen
 	SDL_SetRenderDrawColor(renderer, 22, 22, 166, 255);
 	SDL_RenderClear(renderer);
@@ -164,7 +169,6 @@ int** generate_map() //TODO utworz oddzielna funkcje renderujaca, moze renderMap
 	}
 	//Render map on the screen
 	//SDL_RenderPresent(renderer);
-	return logicMap;
 }
 
 SDL_Texture* loadPacman(char* path)
@@ -251,7 +255,8 @@ void moveLeft() //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo ren
 		pacmanPositionPixels.w = pacmanPositionPixels.w;
 		pacmanPositionPixels.h = pacmanPositionPixels.h;
 
-		int** x = generate_map();
+		int** x = generateMap();
+		renderMap(x);
 		freeMap(x);
 		
 		SDL_RenderCopy(renderer, pacmanClosedLeft, NULL, &pacmanPositionPixels);
@@ -269,7 +274,8 @@ void moveRight() //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo re
 		pacmanPositionPixels.w = pacmanPositionPixels.w;
 		pacmanPositionPixels.h = pacmanPositionPixels.h;
 
-		int** x = generate_map();
+		int** x = generateMap();
+		renderMap(x);
 		freeMap(x);
 
 		SDL_RenderCopy(renderer, pacmanClosedRight, NULL, &pacmanPositionPixels);
@@ -315,7 +321,7 @@ int main(int argc, char* args[])
 					running = false;
 				}
 			}
-			map = generate_map();
+			map = generateMap();
 			
 			if (moveLeftFlag)
 			{
