@@ -1,3 +1,4 @@
+
 //Using SDL and standard IO
 #include <SDL.h>
 #include <stdio.h>
@@ -319,8 +320,8 @@ int main(int argc, char* args[])
 				if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0) //TODO cialo if'a
 				{
 					moveLeft();
-					pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
-					pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
+					//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
+					//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 					printf("\n%d | %d --> %d", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y, map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x]);
 				}
 				if (pacmanPositionPixels.x < 4) { moveLeftFlag = false; moveRightFlag = true; }
@@ -344,7 +345,7 @@ int main(int argc, char* args[])
 			//SDL_RenderCopy(renderer, pacman, NULL, NULL);
 			SDL_RenderPresent(renderer);
 
-			//freeMap(map);
+			freeMap(map);
 		}
 	}
 
