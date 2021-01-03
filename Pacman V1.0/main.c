@@ -89,7 +89,7 @@ void close()
 	SDL_Quit();
 }
 
-int** generateMap() //TODO utworz oddzielna funkcje renderujaca, moze renderMap()?
+int** generateMap()
 {
 	/*
 	* Dimensions of elements on the screen
@@ -160,7 +160,7 @@ void renderMap(int** logicMap)
 			if (logicMap[y][x] == 0) {
 				rect.x = (x + 1) * 32 - 32;
 				rect.y = (y + 1) * 32 - 32;
-				rect.w = 32;
+				rect.w = 32;                                                                    //Dlaczego trzeba za kazdym razem ustawiac wartosc w i h, skoro sie nie zmieniaja. Rect to struktura(?)
 				rect.h = 32;
 				SDL_RenderFillRect(renderer, &rect);
 				//printf("[%d][%d][%d][%d]\n", rect.x, rect.y, rect.w, rect.h);
@@ -246,7 +246,7 @@ void freeMap(int** map)
 	free(map);
 }
 
-void moveLeft() //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
+void moveLeft(int** map) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -255,17 +255,16 @@ void moveLeft() //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo ren
 		pacmanPositionPixels.w = pacmanPositionPixels.w;
 		pacmanPositionPixels.h = pacmanPositionPixels.h;
 
-		int** x = generateMap();
-		renderMap(x);
-		freeMap(x);
+		//int** x = generateMap();
+		renderMap(map);
+		//freeMap(x);
 		
-		SDL_RenderCopy(renderer, pacmanClosedLeft, NULL, &pacmanPositionPixels);
+		SDL_RenderCopy(renderer, pacmanOpenLeft, NULL, &pacmanPositionPixels);
 		SDL_RenderPresent(renderer);
-		SDL_Delay(15); //potrzebne?
 	}
 }
 
-void moveRight() //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
+void moveRight(int** map) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -274,11 +273,47 @@ void moveRight() //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo re
 		pacmanPositionPixels.w = pacmanPositionPixels.w;
 		pacmanPositionPixels.h = pacmanPositionPixels.h;
 
-		int** x = generateMap();
-		renderMap(x);
-		freeMap(x);
+		//int** x = generateMap();
+		renderMap(map);
+		//freeMap(x);
 
-		SDL_RenderCopy(renderer, pacmanClosedRight, NULL, &pacmanPositionPixels);
+		SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
+		SDL_RenderPresent(renderer);
+	}
+}
+
+void moveUp(int** map)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		pacmanPositionPixels.x = pacmanPositionPixels.x;
+		pacmanPositionPixels.y = pacmanPositionPixels.y - 4;
+		pacmanPositionPixels.w = pacmanPositionPixels.w;
+		pacmanPositionPixels.h = pacmanPositionPixels.h;
+
+		//int** x = generateMap();
+		renderMap(map);
+		//freeMap(x);
+
+		SDL_RenderCopy(renderer, pacmanOpenUp, NULL, &pacmanPositionPixels);
+		SDL_RenderPresent(renderer);
+	}
+}
+
+void moveDown(int** map) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
+{
+	for (int i = 0; i < 8; i++)
+	{
+		pacmanPositionPixels.x = pacmanPositionPixels.x;
+		pacmanPositionPixels.y = pacmanPositionPixels.y + 4;
+		pacmanPositionPixels.w = pacmanPositionPixels.w;
+		pacmanPositionPixels.h = pacmanPositionPixels.h;
+
+		//int** x = generateMap();
+		renderMap(map);
+		//freeMap(x);
+
+		SDL_RenderCopy(renderer, pacmanOpenDown, NULL, &pacmanPositionPixels);
 		SDL_RenderPresent(renderer);
 	}
 }
@@ -291,24 +326,22 @@ int main(int argc, char* args[])
 	}
 	else
 	{
+		//Generate logic map
+		map = generateMap();
 
-		bool moveLeftFlag = true;
-		bool moveRightFlag = false;
 		//Load actor's textures
 		loadMedia();
 
 		bool running = true;
 		SDL_Event e;
 
-		//Set pacman position on the screen
-		SDL_Rect pacman1Position = { 100, 100, 32, 32 };
-		SDL_Rect pacman2Position = { 150, 100, 32, 32 };
-		SDL_Rect pacman3Position = { 200, 100, 32, 32 };
-		SDL_Rect pacman4Position = { 250, 100, 32, 32 };
-		SDL_Rect pacman5Position = { 300, 100, 32, 32 };
-		SDL_Rect pacman6Position = { 350, 100, 32, 32 };
-		SDL_Rect pacman7Position = { 400, 100, 32, 32 };
-		SDL_Rect pacman8Position = { 450, 100, 32, 32 };
+		//zmienne robocze, do usuniecia
+		int i = 0;
+
+		//Render start screen
+		renderMap(map);
+		SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
+		SDL_RenderPresent(renderer);
 
 		//While application is running
 		while (running)
@@ -321,40 +354,58 @@ int main(int argc, char* args[])
 					running = false;
 				}
 			}
-			map = generateMap();
 			
-			if (moveLeftFlag)
+			//Handling user input from keyboard
+			const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+			if (currentKeyStates[SDL_SCANCODE_LEFT])
 			{
+				i++;
+				printf("Strzalka W LEWO wcisnieta: %d\n", i);
 				if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0) //TODO cialo if'a
 				{
-					moveLeft();
-					//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
-					//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
-					printf("\n%d | %d --> %d", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y, map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x]);
+					moveLeft(map);
+					pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
+					pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 				}
-				if (pacmanPositionPixels.x < 4) { moveLeftFlag = false; moveRightFlag = true; }
 			}
-			else if (moveRightFlag)
+			else if (currentKeyStates[SDL_SCANCODE_RIGHT])
 			{
-				moveRight();
-				if (pacmanPositionPixels.x > 1020) { moveLeftFlag = true; moveRightFlag = false; }
+				i++;
+				printf("Strzalka W PRAWO wcisnieta: %d\n", i);
+				if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0) //TODO cialo if'a
+				{
+					moveRight(map);
+					pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
+					pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
+				}
+			}
+			else if (currentKeyStates[SDL_SCANCODE_UP])
+			{
+				i++;
+				printf("Strzalka W GORE wcisnieta: %d\n", i);
+				if (map[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0) //TODO cialo if'a
+				{
+					moveUp(map);
+					pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
+					pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1;
+				}
+			}
+			else if (currentKeyStates[SDL_SCANCODE_DOWN])
+			{
+				i++;
+				printf("Strzalka W DOL wcisnieta: %d\n", i);
+				if (map[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0) //TODO cialo if'a
+				{
+					moveDown(map);
+					pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
+					pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
+				}
 			}
 
-			//rendering pacman on the screen
-			//SDL_RenderCopy(renderer, pacmanClosedLeft, NULL, &pacmanPosition);
-			/*SDL_RenderCopy(renderer, pacmanClosedRight, NULL, &pacman2Position);
-			SDL_RenderCopy(renderer, pacmanClosedUp, NULL, &pacman3Position);
-			SDL_RenderCopy(renderer, pacmanClosedDown, NULL, &pacman4Position);
-			SDL_RenderCopy(renderer, pacmanOpenLeft, NULL, &pacman5Position);
-			SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacman6Position);
-			SDL_RenderCopy(renderer, pacmanOpenUp, NULL, &pacman7Position);
-			SDL_RenderCopy(renderer, pacmanOpenDown, NULL, &pacman8Position);*/
-
-			//SDL_RenderCopy(renderer, pacman, NULL, NULL);
 			SDL_RenderPresent(renderer);
-
-			freeMap(map);
 		}
+		//Free memory allocated for logic map
+		freeMap(map);
 	}
 
 	//Close SDL
