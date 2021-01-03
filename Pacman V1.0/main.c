@@ -101,13 +101,14 @@ int** generate_map() //TODO utworz oddzielna funkcje renderujaca, moze renderMap
 	* 1 - it's a wall
 	*/
 
+	//Dynamically allocating memory for logic map
 	int** logicMap = calloc(24, sizeof(int*));
 	for (int i = 0; i < 24; i++)
 	{
 		logicMap[i] = calloc(32, sizeof(int));
 	}
 
-	//int logicMap[y][x]
+	//int logicMapTmp[y][x] for easy setting of map design
 	int logicMapTmp[24][32] = {
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -135,6 +136,7 @@ int** generate_map() //TODO utworz oddzielna funkcje renderujaca, moze renderMap
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 	};
 
+	//Rewrite logicMapTmp to final logicMap allocated dynamically
 	for (int x = 0; x < 32; x++) {
 		for (int y = 0; y < 24; y++) {
 			logicMap[y][x] = logicMapTmp[y][x];
