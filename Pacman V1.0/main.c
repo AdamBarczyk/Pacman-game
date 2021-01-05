@@ -280,14 +280,14 @@ void moveLeft(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna 
 	}
 }
 
-void moveRight(int** map) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
+void moveRight(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
 {
 	for (int i = 0; i < 8; i++)
 	{
-		pacmanPositionPixels.x = pacmanPositionPixels.x + 4;
-		pacmanPositionPixels.y = pacmanPositionPixels.y;
-		pacmanPositionPixels.w = pacmanPositionPixels.w;
-		pacmanPositionPixels.h = pacmanPositionPixels.h;
+		arrayPositionPixels->x = arrayPositionPixels->x + 4;
+		arrayPositionPixels->y = arrayPositionPixels->y;
+		arrayPositionPixels->w = arrayPositionPixels->w;
+		arrayPositionPixels->h = arrayPositionPixels->h;
 
 		//int** x = generateMap();
 		renderMap(map);
@@ -299,14 +299,14 @@ void moveRight(int** map) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozn
 	}
 }
 
-void moveUp(int** map)
+void moveUp(int** map, SDL_Rect* arrayPositionPixels)
 {
 	for (int i = 0; i < 8; i++)
 	{
-		pacmanPositionPixels.x = pacmanPositionPixels.x;
-		pacmanPositionPixels.y = pacmanPositionPixels.y - 4;
-		pacmanPositionPixels.w = pacmanPositionPixels.w;
-		pacmanPositionPixels.h = pacmanPositionPixels.h;
+		arrayPositionPixels->x = arrayPositionPixels->x;
+		arrayPositionPixels->y = arrayPositionPixels->y - 4;
+		arrayPositionPixels->w = arrayPositionPixels->w;
+		arrayPositionPixels->h = arrayPositionPixels->h;
 
 		//int** x = generateMap();
 		renderMap(map);
@@ -317,14 +317,14 @@ void moveUp(int** map)
 	}
 }
 
-void moveDown(int** map) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
+void moveDown(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
 {
 	for (int i = 0; i < 8; i++)
 	{
-		pacmanPositionPixels.x = pacmanPositionPixels.x;
-		pacmanPositionPixels.y = pacmanPositionPixels.y + 4;
-		pacmanPositionPixels.w = pacmanPositionPixels.w;
-		pacmanPositionPixels.h = pacmanPositionPixels.h;
+		arrayPositionPixels->x = arrayPositionPixels->x;
+		arrayPositionPixels->y = arrayPositionPixels->y + 4;
+		arrayPositionPixels->w = arrayPositionPixels->w;
+		arrayPositionPixels->h = arrayPositionPixels->h;
 
 		//int** x = generateMap();
 		renderMap(map);
@@ -352,7 +352,7 @@ void initializePacmanEngine()
 	{
 		if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0)
 		{
-			moveRight(map);
+			moveRight(map, &pacmanPositionPixels);
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 		}
@@ -361,7 +361,7 @@ void initializePacmanEngine()
 	{
 		if (map[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0)
 		{
-			moveUp(map);
+			moveUp(map, &pacmanPositionPixels);
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1;
 		}
@@ -370,7 +370,7 @@ void initializePacmanEngine()
 	{
 		if (map[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0)
 		{
-			moveDown(map);
+			moveDown(map, &pacmanPositionPixels);
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
 		}
