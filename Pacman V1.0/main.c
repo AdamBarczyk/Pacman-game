@@ -379,7 +379,17 @@ void initializePacmanEngine()
 
 void initializeGhostEngine(int** map)
 {
-
+	/*
+	* Sprobuj uzyc struktur do trzymania informacji o koordynatach duszkow tak jak w przypadku pacmana i w podobny sposob zaimplementuj warunek kolizji ze scianami.
+	*
+	* Aktualizuj informacje o pozycji duszka na mapie logicznej, pomo¿e to przy wykrywaniu kolizji z pacmanem(jesli pacman wjedzie w duszka to GameOver)
+	*		-- w jednym cyklu glownej petli programu:  zapisanie informacji o zmianie pozycji duszka --> pacman chce wjechac w to miejsce --> GameOver
+	*		-- porownanie pozycji w momencie przesuniecia pacmana w prawo na zasadzie: if logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 2 then GameOver  //'2' to purpleGhost na mapie logicznej
+	*
+	* Aktualizuj informacje o pozycji pacmana na mapie logicznej, pomo¿e to przy wykrywaniu kolizcji z duszkami(jeœli duszek wjedzie w pacmana to GameOver)
+	*		-- w jednym cyklu glownej petli programu(?):  zapisanie informacji o zmianie pozycji pacmana --> ktorykolwiek z duszkow chce wjechac w to miejsce --> GameOver
+	*		-- porownanie pozycji w momencie przesuniecia duszka w prawo na zasadzie: if logicMap[duszekPositionAtLogicMap.y][duszekPositionAtLogicMap.x + 1] == 9 then GameOver  //'9' to pacman na mapie logicznej
+	*/
 }
 
 int main(int argc, char* args[])
