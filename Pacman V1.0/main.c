@@ -16,7 +16,7 @@ const int SCREEN_WIDTH = 1024; //
 const int SCREEN_HEIGHT = 768; //
 
 //Declaring map
-int** map;
+int** logicMap;
 //Starts up SDL and creates window
 bool init();
 
@@ -45,9 +45,15 @@ SDL_Texture* brownGhost = NULL;
 SDL_Texture* greenGhost = NULL;
 SDL_Texture* yellowGhost = NULL;
 
-//Pacman postion
+//Pacman position
 SDL_Rect pacmanPositionPixels = {15*32, 11*32, 32, 32};
 struct coords pacmanPositionAtLogicMap = { 15,11 };
+
+//Ghosts position
+SDL_Rect purpleGhostPositionPixels = {1*32, 2*32, 32, 32};
+SDL_Rect brownGhostPositionPixels = {30*32, 2*32, 32, 32};
+SDL_Rect greenGhostPositionPixels = {1*32, 22*32, 32, 32};
+SDL_Rect yellowGhostPositionPixels = {30*32, 22*32, 32, 32};
 
 
 bool init()
@@ -104,6 +110,10 @@ int** generateMap()
 	* Mean of array values
 	* 0 - it's a road
 	* 1 - it's a wall
+	* 2 - purple ghost
+	* 3 - brown ghost
+	* 4 - green ghost
+	* 5 - yellow ghost
 	*/
 
 	//Dynamically allocating memory for logic map
@@ -117,7 +127,7 @@ int** generateMap()
 	int logicMapTmp[24][32] = {
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1},
 		{1,0,1,0,1,1,1,1,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1,1,1,1,1,0,1,0,1},
 		{1,0,1,0,1,1,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1,1,0,1,1,1,1,1,0,1,0,1},
 		{1,0,1,0,0,0,0,0,0,0,1,1,1,1,0,1,1,0,1,1,1,1,0,0,0,0,0,0,0,1,0,1},
@@ -137,7 +147,7 @@ int** generateMap()
 		{1,0,1,0,0,0,1,0,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,0,1},
 		{1,0,1,1,1,1,1,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,0,1},
 		{1,0,1,1,1,1,1,0,1,1,1,1,0,1,0,1,1,0,1,0,1,1,1,1,0,1,1,1,1,1,0,1},
-		{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		{1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,1},
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 	};
 
@@ -162,13 +172,12 @@ void renderMap(int** logicMap)
 	SDL_SetRenderDrawColor(renderer, 11, 11, 50, 255);
 	for (int x = 0; x < 32; x++) {
 		for (int y = 0; y < 24; y++) {
-			if (logicMap[y][x] == 0) {
+			if (logicMap[y][x] != 1) {
 				rect.x = (x + 1) * 32 - 32;
 				rect.y = (y + 1) * 32 - 32;
 				rect.w = 32;                                                                    //Dlaczego trzeba za kazdym razem ustawiac wartosc w i h, skoro sie nie zmieniaja. Rect to struktura(?)
 				rect.h = 32;
 				SDL_RenderFillRect(renderer, &rect);
-				//printf("[%d][%d][%d][%d]\n", rect.x, rect.y, rect.w, rect.h);
 			}
 		}
 	}
@@ -261,7 +270,7 @@ void freeMap(int** map)
 	free(map);
 }
 
-void moveLeft(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
+void moveLeft(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -270,17 +279,16 @@ void moveLeft(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna 
 		arrayPositionPixels->w = arrayPositionPixels->w;
 		arrayPositionPixels->h = arrayPositionPixels->h;
 
-		//int** x = generateMap();
-		renderMap(map);
-		//freeMap(x);
+		//Render map based on logic map
+		renderMap(logicMap);
 
-		//SDL_RenderCopy(renderer, pacmanOpenLeft, NULL, &pacmanPositionPixels);
-		SDL_RenderCopy(renderer, pacmanOpenLeft, NULL, &pacmanPositionPixels);
+		//Render texture on the map at position specified in arrayPositionPixels
+		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
 		SDL_RenderPresent(renderer);
 	}
 }
 
-void moveRight(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
+void moveRight(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -289,17 +297,16 @@ void moveRight(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna
 		arrayPositionPixels->w = arrayPositionPixels->w;
 		arrayPositionPixels->h = arrayPositionPixels->h;
 
-		//int** x = generateMap();
-		renderMap(map);
-		//freeMap(x);
+		//Render map based on logic map
+		renderMap(logicMap);
 
-		//SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
-		SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
+		//Render texture on the map at position specified in arrayPositionPixels
+		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
 		SDL_RenderPresent(renderer);
 	}
 }
 
-void moveUp(int** map, SDL_Rect* arrayPositionPixels)
+void moveUp(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -308,16 +315,16 @@ void moveUp(int** map, SDL_Rect* arrayPositionPixels)
 		arrayPositionPixels->w = arrayPositionPixels->w;
 		arrayPositionPixels->h = arrayPositionPixels->h;
 
-		//int** x = generateMap();
-		renderMap(map);
-		//freeMap(x);
+		//Render map based on logic map
+		renderMap(logicMap);
 
-		SDL_RenderCopy(renderer, pacmanOpenUp, NULL, &pacmanPositionPixels);
+		//Render texture on the map at position specified in arrayPositionPixels
+		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
 		SDL_RenderPresent(renderer);
 	}
 }
 
-void moveDown(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
+void moveDown(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -326,11 +333,11 @@ void moveDown(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna 
 		arrayPositionPixels->w = arrayPositionPixels->w;
 		arrayPositionPixels->h = arrayPositionPixels->h;
 
-		//int** x = generateMap();
-		renderMap(map);
-		//freeMap(x);
+		//Render map based on logic map
+		renderMap(logicMap);
 
-		SDL_RenderCopy(renderer, pacmanOpenDown, NULL, &pacmanPositionPixels);
+		//Render texture on the map at position specified in arrayPositionPixels
+		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
 		SDL_RenderPresent(renderer);
 	}
 }
@@ -341,45 +348,67 @@ void initializePacmanEngine()
 	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
 	if (currentKeyStates[SDL_SCANCODE_LEFT])
 	{
-		if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0)
+		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0)
 		{
-			moveLeft(map, &pacmanPositionPixels);
+			//Move pacman to the left and render it on screen
+			moveLeft(logicMap, pacmanOpenLeft, &pacmanPositionPixels);
+
+			//Update pacman position on logic map
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
 	{
-		if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0)
+		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0)
 		{
-			moveRight(map, &pacmanPositionPixels);
+			//Move pacman to the left and render it on screen
+			moveRight(logicMap, pacmanOpenRight, &pacmanPositionPixels);
+
+			//Update pacman position on logic map
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_UP])
 	{
-		if (map[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0)
+		if (logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0)
 		{
-			moveUp(map, &pacmanPositionPixels);
+			//Move pacman to the left and render it on screen
+			moveUp(logicMap, pacmanOpenUp, &pacmanPositionPixels);
+
+			//Update pacman position on logic map
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1;
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_DOWN])
 	{
-		if (map[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0)
+		if (logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0)
 		{
-			moveDown(map, &pacmanPositionPixels);
+			//Move pacman to the left and render it on screen
+			moveDown(logicMap, pacmanOpenDown, &pacmanPositionPixels);
+
+			//Update pacman position on logic map
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
 		}
 	}
 }
 
-void initializeGhostEngine(int** map)
+void initializeGhostEngine(int** logicMap)
 {
-
+	/* 
+	* Sprobuj uzyc struktur do trzymania informacji o koordynatach duszkow tak jak w przypadku pacmana i w podobny sposob zaimplementuj warunek kolizji ze scianami.
+	* 
+	* Aktualizuj informacje o pozycji duszka na mapie logicznej, pomo¿e to przy wykrywaniu kolizji z pacmanem(jesli pacman wjedzie w duszka to GameOver)
+	*		-- w jednym cyklu glownej petli programu:  zapisanie informacji o zmianie pozycji duszka --> pacman chce wjechac w to miejsce --> GameOver
+	*		-- porownanie pozycji w momencie przesuniecia pacmana w prawo na zasadzie: if logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 2 then GameOver  //'2' to purpleGhost na mapie logicznej
+	* 
+	* Aktualizuj informacje o pozycji pacmana na mapie logicznej, pomo¿e to przy wykrywaniu kolizcji z duszkami(jeœli duszek wjedzie w pacmana to GameOver)
+	*		-- w jednym cyklu glownej petli programu(?):  zapisanie informacji o zmianie pozycji pacmana --> ktorykolwiek z duszkow chce wjechac w to miejsce --> GameOver
+	*		-- porownanie pozycji w momencie przesuniecia duszka w prawo na zasadzie: if logicMap[duszekPositionAtLogicMap.y][duszekPositionAtLogicMap.x + 1] == 9 then GameOver  //'9' to pacman na mapie logicznej
+	*/
 }
 
 int main(int argc, char* args[])
@@ -391,7 +420,7 @@ int main(int argc, char* args[])
 	else
 	{
 		//Generate logic map
-		map = generateMap();
+		logicMap = generateMap();
 
 		//Load actor's textures
 		loadMedia();
@@ -402,8 +431,12 @@ int main(int argc, char* args[])
 		//zmienne robocze, do usuniecia
 
 		//Render game's start screen
-		renderMap(map);
+		renderMap(logicMap);
 		SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
+		SDL_RenderCopy(renderer, purpleGhost, NULL, &purpleGhostPositionPixels);
+		SDL_RenderCopy(renderer, brownGhost, NULL, &brownGhostPositionPixels);
+		SDL_RenderCopy(renderer, greenGhost, NULL, &greenGhostPositionPixels);
+		SDL_RenderCopy(renderer, yellowGhost, NULL, &yellowGhostPositionPixels);
 		SDL_RenderPresent(renderer);
 
 		//While application is running
@@ -424,7 +457,7 @@ int main(int argc, char* args[])
 			SDL_RenderPresent(renderer);
 		}
 		//Free memory allocated for logic map
-		freeMap(map);
+		freeMap(logicMap);
 	}
 
 	//Close SDL
