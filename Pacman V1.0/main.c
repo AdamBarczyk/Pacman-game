@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <SDL_image.h>
+#include <string.h>
 
 
 //Declaring structures
@@ -49,11 +50,18 @@ SDL_Texture* yellowGhost = NULL;
 SDL_Rect pacmanPositionPixels = {15*32, 11*32, 32, 32};
 struct coords pacmanPositionAtLogicMap = { 15,11 };
 
+//Pacman movement direction
+char pacmanMovementDirection[6] = "RIGHT";
+
 //Ghosts position
 SDL_Rect purpleGhostPositionPixels = {1*32, 2*32, 32, 32};
+struct coords purpleGhostPositionAtLogicMap = {1, 2};
 SDL_Rect brownGhostPositionPixels = {30*32, 2*32, 32, 32};
+struct coords brownGhostPositionAtLogicMap = { 30, 2 };
 SDL_Rect greenGhostPositionPixels = {1*32, 22*32, 32, 32};
+struct coords greenGhostPositionAtLogicMap = { 1, 22 };
 SDL_Rect yellowGhostPositionPixels = {30*32, 22*32, 32, 32};
+struct coords yellowGhostPositionAtLogicMap = { 30, 22 };
 
 
 bool init()
@@ -288,8 +296,39 @@ void moveLeft(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixel
 	}
 }
 
+//void moveRight(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
+//{
+//	for (int i = 0; i < 8; i++)
+//	{
+//		arrayPositionPixels->x = arrayPositionPixels->x + 4;
+//		arrayPositionPixels->y = arrayPositionPixels->y;
+//		arrayPositionPixels->w = arrayPositionPixels->w;
+//		arrayPositionPixels->h = arrayPositionPixels->h;
+//
+//		//Render map based on logic map
+//		renderMap(logicMap);
+//
+//		//Render texture on the map at position specified in arrayPositionPixels
+//		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
+//		SDL_RenderPresent(renderer);
+//	}
+//}
+
+SDL_Texture* getPacmanDirection()
+{
+
+}
+
 void moveRight(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
 {
+	SDL_Texture* pacmanTmp = pacmanOpenRight;
+	if (strcmp(pacmanMovementDirection, "RIGHT") == 0) { pacmanTmp = pacmanOpenRight; }
+	else if (strcmp(pacmanMovementDirection, "LEFT") == 0) { pacmanTmp = pacmanOpenLeft; }
+	else if (strcmp(pacmanMovementDirection, "UP") == 0) { pacmanTmp = pacmanOpenUp; }
+	else if (strcmp(pacmanMovementDirection, "DOWN") == 0) { pacmanTmp = pacmanOpenDown; }
+
+	SDL_Texture* allTextures[] = { pacmanTmp, purpleGhost, brownGhost, greenGhost, yellowGhost };
+	SDL_Rect* allTexturesPosition[] = { &pacmanPositionPixels, &purpleGhostPositionPixels, &brownGhostPositionPixels, &greenGhostPositionPixels, &yellowGhostPositionPixels };
 	for (int i = 0; i < 8; i++)
 	{
 		arrayPositionPixels->x = arrayPositionPixels->x + 4;
@@ -302,6 +341,16 @@ void moveRight(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixe
 
 		//Render texture on the map at position specified in arrayPositionPixels
 		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
+
+		//rendering on the same frame all other textures, which aren't moving right now, because otherwise these textures will disappear on this frame
+		for (int j = 0; j < 5; j++)
+		{
+			if (allTextures[j] != texture)
+			{
+				SDL_RenderCopy(renderer, allTextures[j], NULL, allTexturesPosition[j]);
+			}
+		}
+		//SDL_RenderCopy(renderer, purpleGhost, NULL, &purpleGhostPositionPixels);
 		SDL_RenderPresent(renderer);
 	}
 }
@@ -342,6 +391,19 @@ void moveDown(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixel
 	}
 }
 
+void notMove(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		//Render map based on logic map
+		renderMap(logicMap);
+
+		//Render texture on the map at position specified in arrayPositionPixels
+		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
+		SDL_RenderPresent(renderer);
+	}
+}
+
 void initializePacmanEngine()
 {
 	//Handling user input from keyboard
@@ -357,9 +419,19 @@ void initializePacmanEngine()
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 		}
+		else
+		{
+			//Ustaw pacmana w lewo
+		}
+
+		//Update pacman movement direction
+		strcpy_s(pacmanMovementDirection, 6 * sizeof(char), "LEFT");
 	}
 	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
 	{
+		//Update pacman movement direction
+		strcpy_s(pacmanMovementDirection, 6 * sizeof(char), "RIGHT");
+
 		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0)
 		{
 			//Move pacman to the left and render it on screen
@@ -368,6 +440,10 @@ void initializePacmanEngine()
 			//Update pacman position on logic map
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
+		}
+		else
+		{
+			//Ustaw pacmana w prawo
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_UP])
@@ -381,6 +457,9 @@ void initializePacmanEngine()
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1;
 		}
+
+		//Update pacman movement direction
+		strcpy_s(pacmanMovementDirection, 6 * sizeof(char), "UP");
 	}
 	else if (currentKeyStates[SDL_SCANCODE_DOWN])
 	{
@@ -393,10 +472,17 @@ void initializePacmanEngine()
 			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
 			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
 		}
+
+		//Update pacman movement direction
+		strcpy_s(pacmanMovementDirection, 6 * sizeof(char), "DOWN");
+	}
+	else
+	{
+		//notMove(logicMap, pacmanOpenRight, &pacmanPositionPixels);
 	}
 }
 
-void initializeGhostEngine(int** logicMap)
+void initializeGhostEngine()
 {
 	/* 
 	* Sprobuj uzyc struktur do trzymania informacji o koordynatach duszkow tak jak w przypadku pacmana i w podobny sposob zaimplementuj warunek kolizji ze scianami.
@@ -409,6 +495,24 @@ void initializeGhostEngine(int** logicMap)
 	*		-- w jednym cyklu glownej petli programu(?):  zapisanie informacji o zmianie pozycji pacmana --> ktorykolwiek z duszkow chce wjechac w to miejsce --> GameOver
 	*		-- porownanie pozycji w momencie przesuniecia duszka w prawo na zasadzie: if logicMap[duszekPositionAtLogicMap.y][duszekPositionAtLogicMap.x + 1] == 9 then GameOver  //'9' to pacman na mapie logicznej
 	*/
+
+	char ghostMovementDirection[6] = "right";
+	//strcpy_s(ghostMovementDirection, 6 * sizeof(char), "left");
+
+	if (strcmp(ghostMovementDirection, "right") == 0)
+	{
+		if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) //warunek spelniony, jesli na nastepnym polu jest droga. Jesli jest sciana lub duszek to nie jest spelniony
+		{
+			moveRight(logicMap, purpleGhost, &purpleGhostPositionPixels);
+
+			//Set old ghost position at logic map to 0 (free road)
+			logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 0;
+			//Update position of ghost at logic map
+			purpleGhostPositionAtLogicMap.x = purpleGhostPositionAtLogicMap.x + 1;
+			//Set current ghost position at logic map to 2 (purpleGhost)
+			logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 2;
+		}
+	}
 }
 
 int main(int argc, char* args[])
@@ -453,6 +557,9 @@ int main(int argc, char* args[])
 			
 			//Handling pacman movement on the map
 			initializePacmanEngine();
+			
+			//Handling ghosts movement on the map
+			initializeGhostEngine();
 
 			SDL_RenderPresent(renderer);
 		}
