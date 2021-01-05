@@ -1,4 +1,3 @@
-
 //Using SDL and standard IO
 #include <SDL.h>
 #include <stdio.h>
@@ -39,6 +38,12 @@ SDL_Texture* pacmanOpenLeft = NULL;
 SDL_Texture* pacmanOpenRight = NULL;
 SDL_Texture* pacmanOpenUp = NULL;
 SDL_Texture* pacmanOpenDown = NULL;
+
+//Ghosts textures
+SDL_Texture* purpleGhost = NULL;
+SDL_Texture* brownGhost = NULL;
+SDL_Texture* greenGhost = NULL;
+SDL_Texture* yellowGhost = NULL;
 
 //Pacman postion
 SDL_Rect pacmanPositionPixels = {15*32, 11*32, 32, 32};
@@ -171,7 +176,7 @@ void renderMap(int** logicMap)
 	//SDL_RenderPresent(renderer);
 }
 
-SDL_Texture* loadPacman(char* path)
+SDL_Texture* loadTexture(char* path)
 {
 	//The final texture
 	SDL_Texture* newTexture = NULL;
@@ -203,17 +208,23 @@ bool loadMedia()
 	//Flag depending on success or failure to load
 	bool success = true;
 
-	//Loading pacman with open mouth turned to right
-	pacmanClosedLeft = loadPacman("pacman_closed_left.png");
-	pacmanClosedRight = loadPacman("pacman_closed_right.png");
-	pacmanClosedUp = loadPacman("pacman_closed_up.png");
-	pacmanClosedDown = loadPacman("pacman_closed_down.png");
-	pacmanOpenLeft = loadPacman("pacman_open_left.png");
-	pacmanOpenRight = loadPacman("pacman_open_right.png");
-	pacmanOpenUp = loadPacman("pacman_open_up.png");
-	pacmanOpenDown = loadPacman("pacman_open_down.png");
+	//Loading pacman textures
+	pacmanClosedLeft = loadTexture("pacman_closed_left.png");
+	pacmanClosedRight = loadTexture("pacman_closed_right.png");
+	pacmanClosedUp = loadTexture("pacman_closed_up.png");
+	pacmanClosedDown = loadTexture("pacman_closed_down.png");
+	pacmanOpenLeft = loadTexture("pacman_open_left.png");
+	pacmanOpenRight = loadTexture("pacman_open_right.png");
+	pacmanOpenUp = loadTexture("pacman_open_up.png");
+	pacmanOpenDown = loadTexture("pacman_open_down.png");
 
-	SDL_Texture* pacmanTextures[] = 
+	//Loading ghosts textures
+	purpleGhost = loadTexture("purple_ghost.png");
+	brownGhost = loadTexture("brown_ghost.png");
+	greenGhost = loadTexture("green_ghost.png");
+	yellowGhost = loadTexture("yellow_ghost.png");
+
+	SDL_Texture* allTextures[] = 
 	{
 		pacmanClosedLeft,
 		pacmanClosedRight,
@@ -222,12 +233,16 @@ bool loadMedia()
 		pacmanOpenLeft,
 		pacmanOpenRight,
 		pacmanOpenUp,
-		pacmanOpenDown
+		pacmanOpenDown,
+		purpleGhost,
+		brownGhost,
+		greenGhost,
+		yellowGhost
 	};
 
 	for (int i = 0; i < 8; i++)
 	{
-		if (pacmanTextures[i] == NULL)
+		if (allTextures[i] == NULL)
 		{
 			printf("\npacman texture could not be loaded in loadMedia function! SDL_Error: %s", SDL_GetError());
 			success = false;
@@ -246,19 +261,20 @@ void freeMap(int** map)
 	free(map);
 }
 
-void moveLeft(int** map) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
+void moveLeft(int** map, SDL_Rect* arrayPositionPixels) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna bylo renderowac bez zmiany polozenia, moze renderPacman()?
 {
 	for (int i = 0; i < 8; i++)
 	{
-		pacmanPositionPixels.x = pacmanPositionPixels.x - 4;
-		pacmanPositionPixels.y = pacmanPositionPixels.y;
-		pacmanPositionPixels.w = pacmanPositionPixels.w;
-		pacmanPositionPixels.h = pacmanPositionPixels.h;
+		arrayPositionPixels->x = arrayPositionPixels->x - 4;
+		arrayPositionPixels->y = arrayPositionPixels->y;
+		arrayPositionPixels->w = arrayPositionPixels->w;
+		arrayPositionPixels->h = arrayPositionPixels->h;
 
 		//int** x = generateMap();
 		renderMap(map);
 		//freeMap(x);
-		
+
+		//SDL_RenderCopy(renderer, pacmanOpenLeft, NULL, &pacmanPositionPixels);
 		SDL_RenderCopy(renderer, pacmanOpenLeft, NULL, &pacmanPositionPixels);
 		SDL_RenderPresent(renderer);
 	}
@@ -277,6 +293,7 @@ void moveRight(int** map) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozn
 		renderMap(map);
 		//freeMap(x);
 
+		//SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
 		SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
 		SDL_RenderPresent(renderer);
 	}
@@ -318,6 +335,53 @@ void moveDown(int** map) //TODO utworz oddzielna funkcje renderujaca, ¿eby mozna
 	}
 }
 
+void initializePacmanEngine()
+{
+	//Handling user input from keyboard
+	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+	if (currentKeyStates[SDL_SCANCODE_LEFT])
+	{
+		if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0)
+		{
+			moveLeft(map, &pacmanPositionPixels);
+			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
+			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
+		}
+	}
+	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
+	{
+		if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0)
+		{
+			moveRight(map);
+			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
+			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
+		}
+	}
+	else if (currentKeyStates[SDL_SCANCODE_UP])
+	{
+		if (map[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0)
+		{
+			moveUp(map);
+			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
+			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1;
+		}
+	}
+	else if (currentKeyStates[SDL_SCANCODE_DOWN])
+	{
+		if (map[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0)
+		{
+			moveDown(map);
+			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
+			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
+		}
+	}
+}
+
+void initializeGhostEngine(int** map)
+{
+
+}
+
 int main(int argc, char* args[])
 {
 	if (!init())
@@ -336,9 +400,8 @@ int main(int argc, char* args[])
 		SDL_Event e;
 
 		//zmienne robocze, do usuniecia
-		int i = 0;
 
-		//Render start screen
+		//Render game's start screen
 		renderMap(map);
 		SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
 		SDL_RenderPresent(renderer);
@@ -355,52 +418,8 @@ int main(int argc, char* args[])
 				}
 			}
 			
-			//Handling user input from keyboard
-			const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
-			if (currentKeyStates[SDL_SCANCODE_LEFT])
-			{
-				i++;
-				printf("Strzalka W LEWO wcisnieta: %d\n", i);
-				if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0) //TODO cialo if'a
-				{
-					moveLeft(map);
-					pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
-					pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
-				}
-			}
-			else if (currentKeyStates[SDL_SCANCODE_RIGHT])
-			{
-				i++;
-				printf("Strzalka W PRAWO wcisnieta: %d\n", i);
-				if (map[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0) //TODO cialo if'a
-				{
-					moveRight(map);
-					pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
-					pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
-				}
-			}
-			else if (currentKeyStates[SDL_SCANCODE_UP])
-			{
-				i++;
-				printf("Strzalka W GORE wcisnieta: %d\n", i);
-				if (map[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0) //TODO cialo if'a
-				{
-					moveUp(map);
-					pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
-					pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1;
-				}
-			}
-			else if (currentKeyStates[SDL_SCANCODE_DOWN])
-			{
-				i++;
-				printf("Strzalka W DOL wcisnieta: %d\n", i);
-				if (map[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0) //TODO cialo if'a
-				{
-					moveDown(map);
-					pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
-					pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
-				}
-			}
+			//Handling pacman movement on the map
+			initializePacmanEngine();
 
 			SDL_RenderPresent(renderer);
 		}

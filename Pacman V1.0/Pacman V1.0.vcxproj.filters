@@ -44,5 +44,17 @@
     <Image Include="pacman_open_up.png">
       <Filter>Pliki zasobów</Filter>
     </Image>
+    <Image Include="purple_ghost.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="brown_ghost.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="green_ghost.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="yellow_ghost.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -145,6 +145,8 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="brown_ghost.png" />
+    <Image Include="green_ghost.png" />
     <Image Include="pacman_closed_down.png" />
     <Image Include="pacman_closed_left.png" />
     <Image Include="pacman_closed_right.png" />
@@ -153,6 +155,8 @@
     <Image Include="pacman_open_left.png" />
     <Image Include="pacman_open_right.png" />
     <Image Include="pacman_open_up.png" />
+    <Image Include="purple_ghost.png" />
+    <Image Include="yellow_ghost.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
