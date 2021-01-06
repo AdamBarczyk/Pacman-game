@@ -430,7 +430,9 @@ void initializePacmanEngine(int** logicMap) //get information about direction of
 	* 4. Dodano funkcje nextStepCycle(), ktora wywoluje funkcje initializePacmanEngine() oraz initializeGhostEngine() w celu zebrania informacji o ruchach pacmana i duszkow w nastepnym kroku(StepCycle).
 	*		Potem przesuwane sa wszystkie elementy o 4px, a nastepnie renderowany jest obraz. Dzieje sie tak 8 razy, zatem elementy przesuwaja sie o 4*8=32px lub nie przesuwaja sie wcale(jesli flaga kierunku
 	*		ktoregokolwiek z elementow byla ustawiona na "SKIP"). Ostatnim krokiem funkcji jest zaktualizowanie informacji o przesunieciu elementow na mapie logicznej.
-	*
+	* 5. Dodano funkcje getGhostDirectionFromAngle(), ktora na podstawie otrzymanego katu obliczonego w funkcji initializeGhostEngine() wybiera kierunek duszka w nastepnym ruchu w taki sposob, 
+	*		zeby duszek "gonil" pacmana. Kierunek jest zapisywany pod zmienna directionFlag(ta zmienna jest parametrem funkcji, pod ktory w czasie wywolania sa podpisywane zmienne <color>GhostDirectionFlag)
+	* 6. Wywolano funkcje nextStepCycle(&logicMap) w funkcji main()
 	*
 	*  @@@@@@@ Z NOTATNIKA PAPIEROWEGO ZOSTALO PRAKTYCZNIE NAPISAC FUNKCJE WYBIERAJACA KIERUNEK DUSZKOW I ODPALIC NAPISANE FUNKCJE W MAINIE @@@@@@@
 	*/
