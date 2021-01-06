@@ -14,8 +14,8 @@ struct coords
 };
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 1024; //
-const int SCREEN_HEIGHT = 768; //
+const int SCREEN_WIDTH = 1024;
+const int SCREEN_HEIGHT = 768;
 
 //Starts up SDL and creates window
 bool init();
@@ -186,14 +186,12 @@ void renderMap(int** logicMap)
 			if (logicMap[y][x] != 1) {
 				rect.x = (x + 1) * 32 - 32;
 				rect.y = (y + 1) * 32 - 32;
-				rect.w = 32;                                                                    //Dlaczego trzeba za kazdym razem ustawiac wartosc w i h, skoro sie nie zmieniaja. Rect to struktura(?)
+				rect.w = 32;
 				rect.h = 32;
 				SDL_RenderFillRect(renderer, &rect);
 			}
 		}
 	}
-	//Render map on the screen
-	//SDL_RenderPresent(renderer);
 }
 
 SDL_Texture* loadTexture(char* path)
@@ -287,13 +285,6 @@ void moveLeft(SDL_Rect* arrayPositionPixels)
 	arrayPositionPixels->y = arrayPositionPixels->y;
 	arrayPositionPixels->w = arrayPositionPixels->w;
 	arrayPositionPixels->h = arrayPositionPixels->h;
-
-	//Render map based on logic map
-	//renderMap(logicMap);
-
-	//Render texture on the map at position specified in arrayPositionPixels
-	//SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
-	//SDL_RenderPresent(renderer);
 }
 
 void moveRight(SDL_Rect* arrayPositionPixels)
@@ -302,13 +293,6 @@ void moveRight(SDL_Rect* arrayPositionPixels)
 	arrayPositionPixels->y = arrayPositionPixels->y;
 	arrayPositionPixels->w = arrayPositionPixels->w;
 	arrayPositionPixels->h = arrayPositionPixels->h;
-
-	//Render map based on logic map
-	//renderMap(logicMap);
-
-	//Render texture on the map at position specified in arrayPositionPixels
-	//SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
-	//SDL_RenderPresent(renderer);
 }
 
 void moveUp(SDL_Rect* arrayPositionPixels)
@@ -317,13 +301,6 @@ void moveUp(SDL_Rect* arrayPositionPixels)
 	arrayPositionPixels->y = arrayPositionPixels->y - 4;
 	arrayPositionPixels->w = arrayPositionPixels->w;
 	arrayPositionPixels->h = arrayPositionPixels->h;
-
-	//Render map based on logic map
-	//renderMap(logicMap);
-
-	//Render texture on the map at position specified in arrayPositionPixels
-	//SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
-	//SDL_RenderPresent(renderer);
 }
 
 void moveDown(SDL_Rect* arrayPositionPixels)
@@ -332,13 +309,6 @@ void moveDown(SDL_Rect* arrayPositionPixels)
 	arrayPositionPixels->y = arrayPositionPixels->y + 4;
 	arrayPositionPixels->w = arrayPositionPixels->w;
 	arrayPositionPixels->h = arrayPositionPixels->h;
-
-	//Render map based on logic map
-	//renderMap(logicMap);
-
-	//Render texture on the map at position specified in arrayPositionPixels
-	//SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
-	//SDL_RenderPresent(renderer);
 }
 
 void initializePacmanEngine(int** logicMap) //get information about direction of the next pacman's movement
@@ -349,60 +319,28 @@ void initializePacmanEngine(int** logicMap) //get information about direction of
 	{
 		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0)
 		{
-			//Move pacman to the left and render it on screen
-			//moveLeft(logicMap, pacmanOpenLeft, &pacmanPositionPixels);
-
-			//Set pacman direction flag for next 32px(1 field) move on the map
 			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "LEFT");
-
-			//Update pacman position on logic map - nie trzeba, dopoki po wcisnieciu klawisza zmieniaja sie tylko flagi kierunku dla nastepnego ruchu
-			//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
-			//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
 	{
 		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0)
 		{
-			//Move pacman to the left and render it on screen
-			//moveRight(logicMap, pacmanOpenRight, &pacmanPositionPixels);
-
-			//Set pacman direction flag for next 32px(1 field) move on the map
 			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "RIGHT");
-
-			//Update pacman position on logic map - nie trzeba, dopoki po wcisnieciu klawisza zmieniaja sie tylko flagi kierunku dla nastepnego ruchu
-			//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
-			//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_UP])
 	{
 		if (logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0)
 		{
-			//Move pacman to the left and render it on screen
-			//moveUp(logicMap, pacmanOpenUp, &pacmanPositionPixels);
-
-			//Set pacman direction flag for next 32px(1 field) move on the map
 			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "UP");
-
-			//Update pacman position on logic map - nie trzeba, dopoki po wcisnieciu klawisza zmieniaja sie tylko flagi kierunku dla nastepnego ruchu
-			//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
-			//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1;
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_DOWN])
 	{
 		if (logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0)
 		{
-			//Move pacman to the left and render it on screen
-			//moveDown(logicMap, pacmanOpenDown, &pacmanPositionPixels);
-
-			//Set pacman direction flag for next 32px(1 field) move on the map
 			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "DOWN");
-
-			//Update pacman position on logic map - nie trzeba, dopoki po wcisnieciu klawisza zmieniaja sie tylko flagi kierunku dla nastepnego ruchu
-			//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
-			//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
 		}
 	}
 	else
@@ -719,7 +657,6 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		//printf("%d", sizeof(int));
 		//Generate logic map
 		int** logicMap = generateMap();
 
@@ -728,8 +665,6 @@ int main(int argc, char* args[])
 
 		bool running = true;
 		SDL_Event e;
-
-		//zmienne robocze, do usuniecia
 
 		//Render game's start screen
 		renderMap(logicMap);
@@ -753,8 +688,6 @@ int main(int argc, char* args[])
 			}
 
 			nextStepCycle(&logicMap);
-
-			//SDL_RenderPresent(renderer);
 		}
 		//Free memory allocated for logic map
 		freeMap(logicMap);
