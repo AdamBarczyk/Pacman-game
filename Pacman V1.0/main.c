@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <SDL_image.h>
+#include <string.h>
 
 
 //Declaring structures
@@ -54,6 +55,13 @@ SDL_Rect purpleGhostPositionPixels = {1*32, 2*32, 32, 32};
 SDL_Rect brownGhostPositionPixels = {30*32, 2*32, 32, 32};
 SDL_Rect greenGhostPositionPixels = {1*32, 22*32, 32, 32};
 SDL_Rect yellowGhostPositionPixels = {30*32, 22*32, 32, 32};
+
+//Direction flags
+char pacmanDirectionFlag[6];
+char purpleGhostDirectionFlag[6];
+char brownGhostDirectionFlag[6];
+char greenGhostDirectionFlag[6];
+char yellowGhostDirectionFlag[6];
 
 
 bool init()
@@ -270,79 +278,67 @@ void freeMap(int** map)
 	free(map);
 }
 
-void moveLeft(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
+void moveLeft(SDL_Rect* arrayPositionPixels)
 {
-	for (int i = 0; i < 8; i++)
-	{
-		arrayPositionPixels->x = arrayPositionPixels->x - 4;
-		arrayPositionPixels->y = arrayPositionPixels->y;
-		arrayPositionPixels->w = arrayPositionPixels->w;
-		arrayPositionPixels->h = arrayPositionPixels->h;
+	arrayPositionPixels->x = arrayPositionPixels->x - 4;
+	arrayPositionPixels->y = arrayPositionPixels->y;
+	arrayPositionPixels->w = arrayPositionPixels->w;
+	arrayPositionPixels->h = arrayPositionPixels->h;
 
-		//Render map based on logic map
-		renderMap(logicMap);
+	//Render map based on logic map
+	//renderMap(logicMap);
 
-		//Render texture on the map at position specified in arrayPositionPixels
-		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
-		SDL_RenderPresent(renderer);
-	}
+	//Render texture on the map at position specified in arrayPositionPixels
+	//SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
+	//SDL_RenderPresent(renderer);
 }
 
-void moveRight(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
+void moveRight(SDL_Rect* arrayPositionPixels)
 {
-	for (int i = 0; i < 8; i++)
-	{
-		arrayPositionPixels->x = arrayPositionPixels->x + 4;
-		arrayPositionPixels->y = arrayPositionPixels->y;
-		arrayPositionPixels->w = arrayPositionPixels->w;
-		arrayPositionPixels->h = arrayPositionPixels->h;
+	arrayPositionPixels->x = arrayPositionPixels->x + 4;
+	arrayPositionPixels->y = arrayPositionPixels->y;
+	arrayPositionPixels->w = arrayPositionPixels->w;
+	arrayPositionPixels->h = arrayPositionPixels->h;
 
-		//Render map based on logic map
-		renderMap(logicMap);
+	//Render map based on logic map
+	//renderMap(logicMap);
 
-		//Render texture on the map at position specified in arrayPositionPixels
-		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
-		SDL_RenderPresent(renderer);
-	}
+	//Render texture on the map at position specified in arrayPositionPixels
+	//SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
+	//SDL_RenderPresent(renderer);
 }
 
-void moveUp(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
+void moveUp(SDL_Rect* arrayPositionPixels)
 {
-	for (int i = 0; i < 8; i++)
-	{
-		arrayPositionPixels->x = arrayPositionPixels->x;
-		arrayPositionPixels->y = arrayPositionPixels->y - 4;
-		arrayPositionPixels->w = arrayPositionPixels->w;
-		arrayPositionPixels->h = arrayPositionPixels->h;
+	arrayPositionPixels->x = arrayPositionPixels->x;
+	arrayPositionPixels->y = arrayPositionPixels->y - 4;
+	arrayPositionPixels->w = arrayPositionPixels->w;
+	arrayPositionPixels->h = arrayPositionPixels->h;
 
-		//Render map based on logic map
-		renderMap(logicMap);
+	//Render map based on logic map
+	//renderMap(logicMap);
 
-		//Render texture on the map at position specified in arrayPositionPixels
-		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
-		SDL_RenderPresent(renderer);
-	}
+	//Render texture on the map at position specified in arrayPositionPixels
+	//SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
+	//SDL_RenderPresent(renderer);
 }
 
-void moveDown(int** logicMap, SDL_Texture* texture, SDL_Rect* arrayPositionPixels)
+void moveDown(SDL_Rect* arrayPositionPixels)
 {
-	for (int i = 0; i < 8; i++)
-	{
-		arrayPositionPixels->x = arrayPositionPixels->x;
-		arrayPositionPixels->y = arrayPositionPixels->y + 4;
-		arrayPositionPixels->w = arrayPositionPixels->w;
-		arrayPositionPixels->h = arrayPositionPixels->h;
+	arrayPositionPixels->x = arrayPositionPixels->x;
+	arrayPositionPixels->y = arrayPositionPixels->y + 4;
+	arrayPositionPixels->w = arrayPositionPixels->w;
+	arrayPositionPixels->h = arrayPositionPixels->h;
 
-		//Render map based on logic map
-		renderMap(logicMap);
+	//Render map based on logic map
+	//renderMap(logicMap);
 
-		//Render texture on the map at position specified in arrayPositionPixels
-		SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
-		SDL_RenderPresent(renderer);
-	}
+	//Render texture on the map at position specified in arrayPositionPixels
+	//SDL_RenderCopy(renderer, texture, NULL, arrayPositionPixels);
+	//SDL_RenderPresent(renderer);
 }
 
-void initializePacmanEngine()
+void initializePacmanEngine() //get information about direction of the next pacman's movement
 {
 	//Handling user input from keyboard
 	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
@@ -351,11 +347,14 @@ void initializePacmanEngine()
 		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0)
 		{
 			//Move pacman to the left and render it on screen
-			moveLeft(logicMap, pacmanOpenLeft, &pacmanPositionPixels);
+			//moveLeft(logicMap, pacmanOpenLeft, &pacmanPositionPixels);
 
-			//Update pacman position on logic map
-			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
-			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
+			//Set pacman direction flag for next 32px(1 field) move on the map
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "LEFT");
+
+			//Update pacman position on logic map - nie trzeba, dopoki po wcisnieciu klawisza zmieniaja sie tylko flagi kierunku dla nastepnego ruchu
+			//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
+			//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
@@ -363,11 +362,14 @@ void initializePacmanEngine()
 		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0)
 		{
 			//Move pacman to the left and render it on screen
-			moveRight(logicMap, pacmanOpenRight, &pacmanPositionPixels);
+			//moveRight(logicMap, pacmanOpenRight, &pacmanPositionPixels);
 
-			//Update pacman position on logic map
-			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
-			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
+			//Set pacman direction flag for next 32px(1 field) move on the map
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "RIGHT");
+
+			//Update pacman position on logic map - nie trzeba, dopoki po wcisnieciu klawisza zmieniaja sie tylko flagi kierunku dla nastepnego ruchu
+			//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
+			//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y;
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_UP])
@@ -375,11 +377,14 @@ void initializePacmanEngine()
 		if (logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0)
 		{
 			//Move pacman to the left and render it on screen
-			moveUp(logicMap, pacmanOpenUp, &pacmanPositionPixels);
+			//moveUp(logicMap, pacmanOpenUp, &pacmanPositionPixels);
 
-			//Update pacman position on logic map
-			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
-			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1;
+			//Set pacman direction flag for next 32px(1 field) move on the map
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "UP");
+
+			//Update pacman position on logic map - nie trzeba, dopoki po wcisnieciu klawisza zmieniaja sie tylko flagi kierunku dla nastepnego ruchu
+			//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
+			//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1;
 		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_DOWN])
@@ -387,16 +392,24 @@ void initializePacmanEngine()
 		if (logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0)
 		{
 			//Move pacman to the left and render it on screen
-			moveDown(logicMap, pacmanOpenDown, &pacmanPositionPixels);
+			//moveDown(logicMap, pacmanOpenDown, &pacmanPositionPixels);
 
-			//Update pacman position on logic map
-			pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
-			pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
+			//Set pacman direction flag for next 32px(1 field) move on the map
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "DOWN");
+
+			//Update pacman position on logic map - nie trzeba, dopoki po wcisnieciu klawisza zmieniaja sie tylko flagi kierunku dla nastepnego ruchu
+			//pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x;
+			//pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
 		}
+	}
+	else
+	{
+		//Set pacman direction flag for next 32px(1 field) move on the map
+		strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP");
 	}
 }
 
-void initializeGhostEngine(int** logicMap)
+void initializeGhostEngine(int** logicMap) //get information about direction of the next ghost movement(every ghost)
 {
 	/* 
 	* Sprobuj uzyc struktur do trzymania informacji o koordynatach duszkow tak jak w przypadku pacmana i w podobny sposob zaimplementuj warunek kolizji ze scianami.
@@ -408,7 +421,36 @@ void initializeGhostEngine(int** logicMap)
 	* Aktualizuj informacje o pozycji pacmana na mapie logicznej, pomo¿e to przy wykrywaniu kolizcji z duszkami(jeœli duszek wjedzie w pacmana to GameOver)
 	*		-- w jednym cyklu glownej petli programu(?):  zapisanie informacji o zmianie pozycji pacmana --> ktorykolwiek z duszkow chce wjechac w to miejsce --> GameOver
 	*		-- porownanie pozycji w momencie przesuniecia duszka w prawo na zasadzie: if logicMap[duszekPositionAtLogicMap.y][duszekPositionAtLogicMap.x + 1] == 9 then GameOver  //'9' to pacman na mapie logicznej
+	* 
+	* 
+	* 1. zmieniono funkcje od movementu w taki sposob, zeby przesuwaly texture o 4px zamiast 32px
+	* 2. zmieniono funkcje initializePacmanEngine() w taki sposob, zeby ustawiala flage kierunku dla nastepnego ruchu. Dotychczas ta funkcja wywolywala funkcje odpowiadajaca za ruch
+	* 3. zmieniono funckje od movementu w taki posob, zeby teraz przesuwaly texture o 4px, ale teraz funkcje te nie renderuja juz obrazu mapy ani textur - zmieniaja tylko dane o polozeniu
+	
+	
+	
+	
 	*/
+}
+
+void nextStepCycle(int** logicMap) //get info about next step of everything on the map and do this step
+{
+	//Get info about next pacman step
+	initializePacmanEngine();
+
+	//Get info about next ghosts step
+	//TODO make algorithm for initializeGhostEngine() function
+	//	  initializeGhostEngine();
+
+	//Move elements of the map. 8 steps: each moves elements by 4px = 8*4px = 32px = 1 (logic)field on the map
+	for (int i = 0; i < 8; i++)
+	{
+		//move pacman
+		if (strcmp(pacmanDirectionFlag, "LEFT") == 0)
+		{
+			
+		}
+	}
 }
 
 int main(int argc, char* args[])
