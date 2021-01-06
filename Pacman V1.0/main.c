@@ -439,23 +439,98 @@ void initializePacmanEngine() //get information about direction of the next pacm
 
 void initializeGhostEngine() //get information about direction of the next ghost movement(every ghost)
 {
+	//variable of type double to store angle of stretch between 2 points at cartesian coordinate system. 
+	//1st quadrant of cartesian coordinate system: 0 - 90 degree
+	//2nd quadrant: 90 - 180 degree
+	//3rd quadrant: (-180) - (-90) degree
+	//4th quadrant: (-90) - 0 degree
 	double angle;
 
 	//purpleGhost
 	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)purpleGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)purpleGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	if (angle > 0 && angle <= 45) { /* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ }
-	else if (angle > 45 && angle <= 90) { /* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ }
-	else if (angle > 90 && angle <= 135) { /* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ }
-	else if (angle > 135 && angle <= 180) { /* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ }
-	else if (angle > -180 && angle <= -135) { /* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ }
-	else if (angle > -135 && angle <= -90) { /* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ }
-	else if (angle > -90 && angle <= -45) { /* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ }
-	else if (angle > -45 && angle <= 0) { /* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ }
+	if (angle > 0 && angle <= 45) 
+	{ 
+		/* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ 
+		if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); }  //PRAWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); } //GORA
+		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+	}
+	else if (angle > 45 && angle <= 90) 
+	{
+		/* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ 
+		if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+	}
+	else if (angle > 90 && angle <= 135) 
+	{ 
+		/* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ 
+		if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+	}
+	else if (angle > 135 && angle <= 180) 
+	{ 
+		/* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ 
+		if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+	}
+	else if (angle > -180 && angle <= -135) 
+	{
+		/* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ 
+		if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+	}
+	else if (angle > -135 && angle <= -90) 
+	{ 
+		/* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ 
+		if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
+	}
+	else if (angle > -90 && angle <= -45) 
+	{
+		/* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ 
+		if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
+	}
+	else if (angle > -45 && angle <= 0) 
+	{ 
+		/* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ 
+		if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+	}
 
 	//brownGhost
 	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)brownGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)brownGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	if (angle > 0 && angle <= 45) { /* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ }
-	else if (angle > 45 && angle <= 90) { /* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ }
+	if (angle > 0 && angle <= 45) 
+	{
+		/* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ 
+		if (logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[brownGhostPositionAtLogicMap.y - 1][brownGhostPositionAtLogicMap.x] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[brownGhostPositionAtLogicMap.y + 1][brownGhostPositionAtLogicMap.x] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+	}
+	else if (angle > 45 && angle <= 90) 
+	{
+		/* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ 
+		if (logicMap[brownGhostPositionAtLogicMap.y - 1][brownGhostPositionAtLogicMap.x] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[brownGhostPositionAtLogicMap.y + 1][brownGhostPositionAtLogicMap.x] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+	}
 	else if (angle > 90 && angle <= 135) { /* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ }
 	else if (angle > 135 && angle <= 180) { /* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ }
 	else if (angle > -180 && angle <= -135) { /* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ }
