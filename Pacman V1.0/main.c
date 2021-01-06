@@ -52,9 +52,13 @@ struct coords pacmanPositionAtLogicMap = { 15,11 };
 
 //Ghosts position
 SDL_Rect purpleGhostPositionPixels = {1*32, 2*32, 32, 32};
+struct coords purpleGhostPositionAtLogicMap = { 1, 2 };
 SDL_Rect brownGhostPositionPixels = {30*32, 2*32, 32, 32};
+struct coords brownGhostPositionAtLogicMap = { 30, 2 };
 SDL_Rect greenGhostPositionPixels = {1*32, 22*32, 32, 32};
+struct coords greenGhostPositionAtLogicMap = { 1, 22 };
 SDL_Rect yellowGhostPositionPixels = {30*32, 22*32, 32, 32};
+struct coords yellowGhostPositionAtLogicMap = { 30, 22 };
 
 //Direction flags
 char pacmanDirectionFlag[6];
@@ -426,6 +430,9 @@ void initializeGhostEngine(int** logicMap) //get information about direction of 
 	* 1. zmieniono funkcje od movementu w taki sposob, zeby przesuwaly texture o 4px zamiast 32px
 	* 2. zmieniono funkcje initializePacmanEngine() w taki sposob, zeby ustawiala flage kierunku dla nastepnego ruchu. Dotychczas ta funkcja wywolywala funkcje odpowiadajaca za ruch
 	* 3. zmieniono funckje od movementu w taki posob, zeby teraz przesuwaly texture o 4px, ale teraz funkcje te nie renderuja juz obrazu mapy ani textur - zmieniaja tylko dane o polozeniu
+	* 4. Dodano funkcje nextStepCycle(), ktora wywoluje funkcje initializePacmanEngine() oraz initializeGhostEngine() w celu zebrania informacji o ruchach pacmana i duszkow w nastepnym kroku(StepCycle). 
+	*		Potem przesuwane sa wszystkie elementy o 4px, a nastepnie renderowany jest obraz. Dzieje sie tak 8 razy, zatem elementy przesuwaja sie o 4*8=32px lub nie przesuwaja sie wcale(jesli flaga kierunku
+	*		ktoregokolwiek z elementow byla ustawiona na "SKIP"). Ostatnim krokiem funkcji jest zaktualizowanie informacji o przesunieciu elementow na mapie logicznej.
 	
 	
 	
@@ -433,7 +440,7 @@ void initializeGhostEngine(int** logicMap) //get information about direction of 
 	*/
 }
 
-void nextStepCycle(int** logicMap) //get info about next step of everything on the map and do this step
+void nextStepCycle(int** logicMap) //get info about next step of everything on the map and do this step (DOESN'T UPDATE INFO ABOUT ELEMENT'S POSITION ON THE LOGIC MAP!)
 {
 	//Get info about next pacman step
 	initializePacmanEngine();
@@ -446,11 +453,171 @@ void nextStepCycle(int** logicMap) //get info about next step of everything on t
 	for (int i = 0; i < 8; i++)
 	{
 		//move pacman
-		if (strcmp(pacmanDirectionFlag, "LEFT") == 0)
-		{
-			
-		}
+		if (strcmp(pacmanDirectionFlag, "LEFT") == 0) { moveLeft(&pacmanPositionPixels); }
+		else if (strcmp(pacmanDirectionFlag, "RIGHT") == 0) { moveRight(&pacmanPositionPixels); }
+		else if (strcmp(pacmanDirectionFlag, "UP") == 0) { moveUp(&pacmanPositionPixels); }
+		else if (strcmp(pacmanDirectionFlag, "DOWN") == 0) { moveDown(&pacmanPositionPixels); }
+		else if (strcmp(pacmanDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+		//move purpleGhost
+		if (strcmp(purpleGhostDirectionFlag, "LEFT") == 0) { moveLeft(&purpleGhostPositionPixels); }
+		else if (strcmp(purpleGhostDirectionFlag, "RIGHT") == 0) { moveRight(&purpleGhostPositionPixels); }
+		else if (strcmp(purpleGhostDirectionFlag, "UP") == 0) { moveUP(&purpleGhostPositionPixels); }
+		else if (strcmp(purpleGhostDirectionFlag, "DOWN") == 0) { moveDown(&purpleGhostPositionPixels); }
+		else if (strcmp(purpleGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+		//move brownGhost
+		if (strcmp(brownGhostDirectionFlag, "LEFT") == 0) { moveLeft(&brownGhostPositionPixels); }
+		else if (strcmp(brownGhostDirectionFlag, "RIGHT") == 0) { moveRight(&brownGhostPositionPixels); }
+		else if (strcmp(brownGhostDirectionFlag, "UP") == 0) { moveUp(&brownGhostPositionPixels); }
+		else if (strcmp(brownGhostDirectionFlag, "DOWN") == 0) { moveDown(&brownGhostPositionPixels); }
+		else if (strcmp(brownGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+		//move greenGhost
+		if (strcmp(greenGhostDirectionFlag, "LEFT") == 0) { moveLeft(&greenGhostPositionPixels); }
+		else if (strcmp(greenGhostDirectionFlag, "RIGHT") == 0) { moveRight(&greenGhostPositionPixels); }
+		else if (strcmp(greenGhostDirectionFlag, "UP") == 0) { moveUp(&greenGhostPositionPixels); }
+		else if (strcmp(greenGhostDirectionFlag, "DOWN") == 0) { moveDown(&greenGhostPositionPixels); }
+		else if (strcmp(greenGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+		//move yellowGhost
+		if (strcmp(yellowGhostDirectionFlag, "LEFT") == 0) { moveLeft(&yellowGhostPositionPixels); }
+		else if (strcmp(yellowGhostDirectionFlag, "RIGHT") == 0) { moveRight(&yellowGhostPositionPixels); }
+		else if (strcmp(yellowGhostDirectionFlag, "UP") == 0) { moveUp(&yellowGhostPositionPixels); }
+		else if (strcmp(yellowGhostDirectionFlag, "DOWN") == 0) { moveDown(&yellowGhostPositionPixels); }
+		else if (strcmp(yellowGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+		//render map and all moves on the map
+		//render map
+		renderMap(logicMap);
+		//render pacman
+		SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
+		//render all ghosts
+		SDL_RenderCopy(renderer, purpleGhost, NULL, &purpleGhostPositionPixels);
+		SDL_RenderCopy(renderer, brownGhost, NULL, &brownGhostPositionPixels);
+		SDL_RenderCopy(renderer, greenGhost, NULL, &greenGhostPositionPixels);
+		SDL_RenderCopy(renderer, yellowGhost, NULL, &yellowGhostPositionPixels);
 	}
+
+	//Update pacman position
+	logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 0; //Delete old pacman position from logic map (0 - road)
+	if (strcmp(pacmanDirectionFlag, "LEFT") == 0)
+	{ 
+		pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
+		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] = 9; //Set new pacman position in logic map (9 - pacman)
+	}
+	else if (strcmp(pacmanDirectionFlag, "RIGHT") == 0)
+	{ 
+		pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
+		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] = 9;
+	}
+	else if (strcmp(pacmanDirectionFlag, "UP") == 0)
+	{ 
+		pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1; 
+		logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] = 9;
+	}
+	else if (strcmp(pacmanDirectionFlag, "DOWN") == 0)
+	{
+		pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
+		logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] = 9;
+	}
+	else if (strcmp(pacmanDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+	//Update purpleGhost
+	logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 0; //Delete old purpleGhost position from logic map (0 - road)
+	if (strcmp(purpleGhostDirectionFlag, "LEFT") == 0)
+	{ 
+		purpleGhostPositionAtLogicMap.x = purpleGhostPositionAtLogicMap.x - 1;
+		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] = 2; //Set new purpleGhost position in logic map (2 - purpleGhost)
+	}
+	else if (strcmp(purpleGhostDirectionFlag, "RIGHT") == 0)
+	{ 
+		purpleGhostPositionAtLogicMap.x = purpleGhostPositionAtLogicMap.x + 1;
+		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] = 2;
+	}
+	else if (strcmp(purpleGhostDirectionFlag, "UP") == 0)
+	{ 
+		purpleGhostPositionAtLogicMap.y = purpleGhostPositionAtLogicMap.y - 1;
+		logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] = 2;
+	}
+	else if (strcmp(purpleGhostDirectionFlag, "DOWN") == 0)
+	{ 
+		purpleGhostPositionAtLogicMap.y = purpleGhostPositionAtLogicMap.y + 1;
+		logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] = 2;
+	}
+	else if (strcmp(purpleGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+	//Update brownGhost
+	logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x] = 0; //Delete old brownGhost position from logic map (0 - road)
+	if (strcmp(brownGhostDirectionFlag, "LEFT") == 0)
+	{
+		brownGhostPositionAtLogicMap.x = brownGhostPositionAtLogicMap.x - 1;
+		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x - 1] = 3; //Set new brownGhost position in logic map (3 - brownGhost)
+	}
+	else if (strcmp(brownGhostDirectionFlag, "RIGHT") == 0)
+	{
+		brownGhostPositionAtLogicMap.x = brownGhostPositionAtLogicMap.x + 1;
+		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x + 1] = 3;
+	}
+	else if (strcmp(brownGhostDirectionFlag, "UP") == 0)
+	{
+		brownGhostPositionAtLogicMap.y = brownGhostPositionAtLogicMap.y - 1;
+		logicMap[brownGhostPositionAtLogicMap.y - 1][brownGhostPositionAtLogicMap.x] = 3;
+	}
+	else if (strcmp(brownGhostDirectionFlag, "DOWN") == 0)
+	{
+		brownGhostPositionAtLogicMap.y = brownGhostPositionAtLogicMap.y + 1;
+		logicMap[brownGhostPositionAtLogicMap.y + 1][brownGhostPositionAtLogicMap.x] = 3;
+	}
+	else if (strcmp(brownGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+	//Update greenGhost
+	logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x] = 0; //Delete old greenGhost position from logic map (0 - road)
+	if (strcmp(greenGhostDirectionFlag, "LEFT") == 0)
+	{
+		greenGhostPositionAtLogicMap.x = greenGhostPositionAtLogicMap.x - 1;
+		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x - 1] = 4; //Set new greenGhost position in logic map (4 - greenGhost)
+	}
+	else if (strcmp(greenGhostDirectionFlag, "RIGHT") == 0)
+	{
+		greenGhostPositionAtLogicMap.x = greenGhostPositionAtLogicMap.x + 1;
+		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x + 1] = 4;
+	}
+	else if (strcmp(greenGhostDirectionFlag, "UP") == 0)
+	{
+		greenGhostPositionAtLogicMap.y = greenGhostPositionAtLogicMap.y - 1;
+		logicMap[greenGhostPositionAtLogicMap.y - 1][greenGhostPositionAtLogicMap.x] = 4;
+	}
+	else if (strcmp(greenGhostDirectionFlag, "DOWN") == 0)
+	{
+		greenGhostPositionAtLogicMap.y = greenGhostPositionAtLogicMap.y + 1;
+		logicMap[greenGhostPositionAtLogicMap.y + 1][greenGhostPositionAtLogicMap.x] = 4;
+	}
+	else if (strcmp(greenGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+	//Update yellowGhost
+	logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 0; //Delete old yellowGhost position from logic map (0 - road)
+	if (strcmp(yellowGhostDirectionFlag, "LEFT") == 0)
+	{
+		yellowGhostPositionAtLogicMap.x = yellowGhostPositionAtLogicMap.x - 1;
+		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x - 1] = 5; //Set new yellowGhost position in logic map (5 - yellowGhost)
+	}
+	else if (strcmp(yellowGhostDirectionFlag, "RIGHT") == 0)
+	{
+		yellowGhostPositionAtLogicMap.x = yellowGhostPositionAtLogicMap.x + 1;
+		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x + 1] = 5;
+	}
+	else if (strcmp(yellowGhostDirectionFlag, "UP") == 0)
+	{
+		yellowGhostPositionAtLogicMap.y = yellowGhostPositionAtLogicMap.y - 1;
+		logicMap[yellowGhostPositionAtLogicMap.y - 1][yellowGhostPositionAtLogicMap.x] = 5;
+	}
+	else if (strcmp(yellowGhostDirectionFlag, "DOWN") == 0)
+	{
+		yellowGhostPositionAtLogicMap.y = yellowGhostPositionAtLogicMap.y + 1;
+		logicMap[yellowGhostPositionAtLogicMap.y + 1][yellowGhostPositionAtLogicMap.x] = 5;
+	}
+	else if (strcmp(yellowGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
 }
 
 int main(int argc, char* args[])
