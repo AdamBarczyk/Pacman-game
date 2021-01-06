@@ -17,8 +17,6 @@ struct coords
 const int SCREEN_WIDTH = 1024; //
 const int SCREEN_HEIGHT = 768; //
 
-//Declaring map
-int** logicMap;
 //Starts up SDL and creates window
 bool init();
 
@@ -343,7 +341,7 @@ void moveDown(SDL_Rect* arrayPositionPixels)
 	//SDL_RenderPresent(renderer);
 }
 
-void initializePacmanEngine() //get information about direction of the next pacman's movement
+void initializePacmanEngine(int** logicMap) //get information about direction of the next pacman's movement
 {
 	//Handling user input from keyboard
 	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
@@ -437,7 +435,75 @@ void initializePacmanEngine() //get information about direction of the next pacm
 	*  @@@@@@@ Z NOTATNIKA PAPIEROWEGO ZOSTALO PRAKTYCZNIE NAPISAC FUNKCJE WYBIERAJACA KIERUNEK DUSZKOW I ODPALIC NAPISANE FUNKCJE W MAINIE @@@@@@@
 	*/
 
-void initializeGhostEngine() //get information about direction of the next ghost movement(every ghost)
+void getGhostDirectionFromAngle(int** logicMap, double angle, struct coords* positionAtLogicMap, char directionFlag)
+{
+	if (angle > 0 && angle <= 45)
+	{
+		/* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */
+		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); }  //PRAWO
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); } //GORA
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+	}
+	else if (angle > 45 && angle <= 90)
+	{
+		/* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */
+		if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+	}
+	else if (angle > 90 && angle <= 135)
+	{
+		/* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */
+		if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+	}
+	else if (angle > 135 && angle <= 180)
+	{
+		/* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */
+		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+	}
+	else if (angle > -180 && angle <= -135)
+	{
+		/* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */
+		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+	}
+	else if (angle > -135 && angle <= -90)
+	{
+		/* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */
+		if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
+	}
+	else if (angle > -90 && angle <= -45)
+	{
+		/* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */
+		if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
+	}
+	else if (angle > -45 && angle <= 0)
+	{
+		/* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */
+		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
+	}
+}
+
+void initializeGhostEngine(int** logicMap) //get information about direction of the next ghost movement(every ghost)
 {
 	//variable of type double to store angle of stretch between 2 points at cartesian coordinate system. 
 	//1st quadrant of cartesian coordinate system: 0 - 90 degree
@@ -448,127 +514,29 @@ void initializeGhostEngine() //get information about direction of the next ghost
 
 	//purpleGhost
 	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)purpleGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)purpleGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	if (angle > 0 && angle <= 45) 
-	{ 
-		/* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ 
-		if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); }  //PRAWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); } //GORA
-		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-	}
-	else if (angle > 45 && angle <= 90) 
-	{
-		/* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ 
-		if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-	}
-	else if (angle > 90 && angle <= 135) 
-	{ 
-		/* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ 
-		if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-	}
-	else if (angle > 135 && angle <= 180) 
-	{ 
-		/* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ 
-		if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-	}
-	else if (angle > -180 && angle <= -135) 
-	{
-		/* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ 
-		if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-	}
-	else if (angle > -135 && angle <= -90) 
-	{ 
-		/* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ 
-		if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
-	}
-	else if (angle > -90 && angle <= -45) 
-	{
-		/* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ 
-		if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
-	}
-	else if (angle > -45 && angle <= 0) 
-	{ 
-		/* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ 
-		if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[purpleGhostPositionAtLogicMap.y + 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[purpleGhostPositionAtLogicMap.y - 1][purpleGhostPositionAtLogicMap.x] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(purpleGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-	}
+	getGhostDirectionFromAngle(logicMap, angle, &purpleGhostPositionAtLogicMap, purpleGhostDirectionFlag);
 
 	//brownGhost
 	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)brownGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)brownGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	if (angle > 0 && angle <= 45) 
-	{
-		/* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ 
-		if (logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[brownGhostPositionAtLogicMap.y - 1][brownGhostPositionAtLogicMap.x] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[brownGhostPositionAtLogicMap.y + 1][brownGhostPositionAtLogicMap.x] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-	}
-	else if (angle > 45 && angle <= 90) 
-	{
-		/* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ 
-		if (logicMap[brownGhostPositionAtLogicMap.y - 1][brownGhostPositionAtLogicMap.x] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x + 1] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x - 1] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[brownGhostPositionAtLogicMap.y + 1][brownGhostPositionAtLogicMap.x] == 0) { strcpy_s(brownGhostDirectionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-	}
-	else if (angle > 90 && angle <= 135) { /* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ }
-	else if (angle > 135 && angle <= 180) { /* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ }
-	else if (angle > -180 && angle <= -135) { /* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ }
-	else if (angle > -135 && angle <= -90) { /* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ }
-	else if (angle > -90 && angle <= -45) { /* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ }
-	else if (angle > -45 && angle <= 0) { /* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ }
+	getGhostDirectionFromAngle(logicMap, angle, &brownGhostPositionAtLogicMap, brownGhostDirectionFlag);
 
 	//greenGhost
 	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)greenGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)greenGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	if (angle > 0 && angle <= 45) { /* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ }
-	else if (angle > 45 && angle <= 90) { /* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ }
-	else if (angle > 90 && angle <= 135) { /* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ }
-	else if (angle > 135 && angle <= 180) { /* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ }
-	else if (angle > -180 && angle <= -135) { /* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ }
-	else if (angle > -135 && angle <= -90) { /* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ }
-	else if (angle > -90 && angle <= -45) { /* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ }
-	else if (angle > -45 && angle <= 0) { /* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ }
+	getGhostDirectionFromAngle(logicMap, angle, &greenGhostPositionAtLogicMap, greenGhostDirectionFlag);
 
 	//yellowGhost
 	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)yellowGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)yellowGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	if (angle > 0 && angle <= 45) { /* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ }
-	else if (angle > 45 && angle <= 90) { /* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ }
-	else if (angle > 90 && angle <= 135) { /* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ }
-	else if (angle > 135 && angle <= 180) { /* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ }
-	else if (angle > -180 && angle <= -135) { /* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ }
-	else if (angle > -135 && angle <= -90) { /* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ }
-	else if (angle > -90 && angle <= -45) { /* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ }
-	else if (angle > -45 && angle <= 0) { /* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ }
+	getGhostDirectionFromAngle(logicMap, angle, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag);
 }
 
 void nextStepCycle(int** logicMap) //get info about next step of everything on the map and do this step (DOESN'T UPDATE INFO ABOUT ELEMENT'S POSITION ON THE LOGIC MAP!)
 {
 	//Get info about next pacman step
-	initializePacmanEngine();
+	initializePacmanEngine(logicMap);
 
 	//Get info about next ghosts step
 	//TODO make algorithm for initializeGhostEngine() function
-	initializeGhostEngine();
+	initializeGhostEngine(logicMap);
 
 	//Move elements of the map. 8 steps: each moves elements by 4px = 8*4px = 32px = 1 (logic)field on the map
 	for (int i = 0; i < 8; i++)
@@ -583,7 +551,7 @@ void nextStepCycle(int** logicMap) //get info about next step of everything on t
 		//move purpleGhost
 		if (strcmp(purpleGhostDirectionFlag, "LEFT") == 0) { moveLeft(&purpleGhostPositionPixels); }
 		else if (strcmp(purpleGhostDirectionFlag, "RIGHT") == 0) { moveRight(&purpleGhostPositionPixels); }
-		else if (strcmp(purpleGhostDirectionFlag, "UP") == 0) { moveUP(&purpleGhostPositionPixels); }
+		else if (strcmp(purpleGhostDirectionFlag, "UP") == 0) { moveUp(&purpleGhostPositionPixels); }
 		else if (strcmp(purpleGhostDirectionFlag, "DOWN") == 0) { moveDown(&purpleGhostPositionPixels); }
 		else if (strcmp(purpleGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
 
@@ -749,8 +717,9 @@ int main(int argc, char* args[])
 	}
 	else
 	{
+		//printf("%d", sizeof(int));
 		//Generate logic map
-		logicMap = generateMap();
+		int** logicMap = generateMap();
 
 		//Load actor's textures
 		loadMedia();
@@ -780,6 +749,8 @@ int main(int argc, char* args[])
 					running = false;
 				}
 			}
+
+			nextStepCycle(&logicMap);
 
 			//SDL_RenderPresent(renderer);
 		}

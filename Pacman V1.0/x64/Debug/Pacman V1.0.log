@@ -1,1 +1,76 @@
-﻿  Pacman V1.0.vcxproj -> D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\x64\Debug\Pacman V1.0.exe
+﻿  main.c
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(443,116): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(443,103): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(444,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(444,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(445,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(445,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(446,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(446,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(451,96): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(451,83): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(452,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(452,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(453,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(453,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(454,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(454,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(459,96): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(459,83): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(460,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(460,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(461,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(461,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(462,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(462,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(467,96): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(467,83): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(468,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(468,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(469,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(469,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(470,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(470,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(475,96): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(475,83): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(476,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(476,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(477,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(477,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(478,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(478,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(483,96): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(483,83): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(484,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(484,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(485,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(485,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(486,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(486,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(491,96): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(491,83): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(492,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(492,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(493,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(493,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(494,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(494,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(499,96): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(499,83): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(500,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(500,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(501,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(501,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(502,101): warning C4047: 'function': 'char *' differs in levels of indirection from 'char'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(502,88): warning C4024: 'strcpy_s': different types for formal and actual parameter 1
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(518,102): warning C4047: 'function': 'char' differs in levels of indirection from 'char [6]'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(518,78): warning C4024: 'getGhostDirectionFromAngle': different types for formal and actual parameter 4
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(522,100): warning C4047: 'function': 'char' differs in levels of indirection from 'char [6]'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(522,77): warning C4024: 'getGhostDirectionFromAngle': different types for formal and actual parameter 4
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(526,100): warning C4047: 'function': 'char' differs in levels of indirection from 'char [6]'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(526,77): warning C4024: 'getGhostDirectionFromAngle': different types for formal and actual parameter 4
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(530,102): warning C4047: 'function': 'char' differs in levels of indirection from 'char [6]'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(530,78): warning C4024: 'getGhostDirectionFromAngle': different types for formal and actual parameter 4
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(754,27): warning C4047: 'function': 'int **' differs in levels of indirection from 'int ***'
+D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\Pacman V1.0\main.c(754,18): warning C4024: 'nextStepCycle': different types for formal and actual parameter 1
+  Pacman V1.0.vcxproj -> D:\BACKUP\Studia\Kurs C\Projekty\Pacman V1.0\x64\Debug\Pacman V1.0.exe
