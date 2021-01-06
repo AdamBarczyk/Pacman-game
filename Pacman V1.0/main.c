@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <SDL_image.h>
 #include <string.h>
+#include <math.h>
 
 
 //Declaring structures
@@ -413,34 +414,76 @@ void initializePacmanEngine() //get information about direction of the next pacm
 	}
 }
 
-void initializeGhostEngine(int** logicMap) //get information about direction of the next ghost movement(every ghost)
-{
-	/* 
+/*
 	* Sprobuj uzyc struktur do trzymania informacji o koordynatach duszkow tak jak w przypadku pacmana i w podobny sposob zaimplementuj warunek kolizji ze scianami.
-	* 
+	*
 	* Aktualizuj informacje o pozycji duszka na mapie logicznej, pomo¿e to przy wykrywaniu kolizji z pacmanem(jesli pacman wjedzie w duszka to GameOver)
 	*		-- w jednym cyklu glownej petli programu:  zapisanie informacji o zmianie pozycji duszka --> pacman chce wjechac w to miejsce --> GameOver
 	*		-- porownanie pozycji w momencie przesuniecia pacmana w prawo na zasadzie: if logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 2 then GameOver  //'2' to purpleGhost na mapie logicznej
-	* 
+	*
 	* Aktualizuj informacje o pozycji pacmana na mapie logicznej, pomo¿e to przy wykrywaniu kolizcji z duszkami(jeœli duszek wjedzie w pacmana to GameOver)
 	*		-- w jednym cyklu glownej petli programu(?):  zapisanie informacji o zmianie pozycji pacmana --> ktorykolwiek z duszkow chce wjechac w to miejsce --> GameOver
 	*		-- porownanie pozycji w momencie przesuniecia duszka w prawo na zasadzie: if logicMap[duszekPositionAtLogicMap.y][duszekPositionAtLogicMap.x + 1] == 9 then GameOver  //'9' to pacman na mapie logicznej
-	* 
-	* 
+	*
+	*
 	* 1. zmieniono funkcje od movementu w taki sposob, zeby przesuwaly texture o 4px zamiast 32px
 	* 2. zmieniono funkcje initializePacmanEngine() w taki sposob, zeby ustawiala flage kierunku dla nastepnego ruchu. Dotychczas ta funkcja wywolywala funkcje odpowiadajaca za ruch
 	* 3. zmieniono funckje od movementu w taki posob, zeby teraz przesuwaly texture o 4px, ale teraz funkcje te nie renderuja juz obrazu mapy ani textur - zmieniaja tylko dane o polozeniu
-	* 4. Dodano funkcje nextStepCycle(), ktora wywoluje funkcje initializePacmanEngine() oraz initializeGhostEngine() w celu zebrania informacji o ruchach pacmana i duszkow w nastepnym kroku(StepCycle). 
+	* 4. Dodano funkcje nextStepCycle(), ktora wywoluje funkcje initializePacmanEngine() oraz initializeGhostEngine() w celu zebrania informacji o ruchach pacmana i duszkow w nastepnym kroku(StepCycle).
 	*		Potem przesuwane sa wszystkie elementy o 4px, a nastepnie renderowany jest obraz. Dzieje sie tak 8 razy, zatem elementy przesuwaja sie o 4*8=32px lub nie przesuwaja sie wcale(jesli flaga kierunku
 	*		ktoregokolwiek z elementow byla ustawiona na "SKIP"). Ostatnim krokiem funkcji jest zaktualizowanie informacji o przesunieciu elementow na mapie logicznej.
-	* 
-	* 
+	*
+	*
 	*  @@@@@@@ Z NOTATNIKA PAPIEROWEGO ZOSTALO PRAKTYCZNIE NAPISAC FUNKCJE WYBIERAJACA KIERUNEK DUSZKOW I ODPALIC NAPISANE FUNKCJE W MAINIE @@@@@@@
-	
-	
-	
-	
 	*/
+
+void initializeGhostEngine() //get information about direction of the next ghost movement(every ghost)
+{
+	double angle;
+
+	//purpleGhost
+	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)purpleGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)purpleGhostPositionAtLogicMap.x)) * 180 / M_PI;
+	if (angle > 0 && angle <= 45) { /* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ }
+	else if (angle > 45 && angle <= 90) { /* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ }
+	else if (angle > 90 && angle <= 135) { /* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ }
+	else if (angle > 135 && angle <= 180) { /* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ }
+	else if (angle > -180 && angle <= -135) { /* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ }
+	else if (angle > -135 && angle <= -90) { /* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ }
+	else if (angle > -90 && angle <= -45) { /* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ }
+	else if (angle > -45 && angle <= 0) { /* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ }
+
+	//brownGhost
+	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)brownGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)brownGhostPositionAtLogicMap.x)) * 180 / M_PI;
+	if (angle > 0 && angle <= 45) { /* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ }
+	else if (angle > 45 && angle <= 90) { /* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ }
+	else if (angle > 90 && angle <= 135) { /* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ }
+	else if (angle > 135 && angle <= 180) { /* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ }
+	else if (angle > -180 && angle <= -135) { /* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ }
+	else if (angle > -135 && angle <= -90) { /* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ }
+	else if (angle > -90 && angle <= -45) { /* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ }
+	else if (angle > -45 && angle <= 0) { /* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ }
+
+	//greenGhost
+	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)greenGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)greenGhostPositionAtLogicMap.x)) * 180 / M_PI;
+	if (angle > 0 && angle <= 45) { /* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ }
+	else if (angle > 45 && angle <= 90) { /* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ }
+	else if (angle > 90 && angle <= 135) { /* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ }
+	else if (angle > 135 && angle <= 180) { /* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ }
+	else if (angle > -180 && angle <= -135) { /* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ }
+	else if (angle > -135 && angle <= -90) { /* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ }
+	else if (angle > -90 && angle <= -45) { /* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ }
+	else if (angle > -45 && angle <= 0) { /* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ }
+
+	//yellowGhost
+	angle = atan2(((double)pacmanPositionAtLogicMap.y - (double)yellowGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)yellowGhostPositionAtLogicMap.x)) * 180 / M_PI;
+	if (angle > 0 && angle <= 45) { /* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */ }
+	else if (angle > 45 && angle <= 90) { /* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */ }
+	else if (angle > 90 && angle <= 135) { /* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */ }
+	else if (angle > 135 && angle <= 180) { /* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */ }
+	else if (angle > -180 && angle <= -135) { /* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */ }
+	else if (angle > -135 && angle <= -90) { /* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */ }
+	else if (angle > -90 && angle <= -45) { /* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */ }
+	else if (angle > -45 && angle <= 0) { /* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */ }
 }
 
 void nextStepCycle(int** logicMap) //get info about next step of everything on the map and do this step (DOESN'T UPDATE INFO ABOUT ELEMENT'S POSITION ON THE LOGIC MAP!)
@@ -450,7 +493,7 @@ void nextStepCycle(int** logicMap) //get info about next step of everything on t
 
 	//Get info about next ghosts step
 	//TODO make algorithm for initializeGhostEngine() function
-	//	  initializeGhostEngine();
+	initializeGhostEngine();
 
 	//Move elements of the map. 8 steps: each moves elements by 4px = 8*4px = 32px = 1 (logic)field on the map
 	for (int i = 0; i < 8; i++)
