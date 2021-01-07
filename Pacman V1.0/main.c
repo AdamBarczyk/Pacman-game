@@ -107,7 +107,7 @@ void close()
 	SDL_DestroyWindow(window);
 	window = NULL;
 
-	//Quit SDL subsystems
+	//Quit SDL
 	SDL_Quit();
 }
 
@@ -714,34 +714,40 @@ int main(int argc, char* args[])
 		int** logicMap = generateMap();
 
 		//Load actor's textures
-		loadMedia();
-
-		bool running = true;
-		SDL_Event e;
-
-		//Render game's start screen
-		renderMap(logicMap);
-		SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
-		SDL_RenderCopy(renderer, purpleGhost, NULL, &purpleGhostPositionPixels);
-		SDL_RenderCopy(renderer, brownGhost, NULL, &brownGhostPositionPixels);
-		SDL_RenderCopy(renderer, greenGhost, NULL, &greenGhostPositionPixels);
-		SDL_RenderCopy(renderer, yellowGhost, NULL, &yellowGhostPositionPixels);
-		SDL_RenderPresent(renderer);
-
-		//While application is running
-		while (running)
+		if (!loadMedia()) 
 		{
-			while (SDL_PollEvent(&e) != 0)
-			{
-				//User requests quit the application
-				if (e.type == SDL_QUIT)
-				{
-					running = false;
-				}
-			}
+			printf("\nMedia could not be loaded!");
+		}
+		else 
+		{
+			bool running = true;
+			SDL_Event e;
 
-			initializeEngine(logicMap);
-			//SDL_Delay(17);
+			//Render game's start screen
+			renderMap(logicMap);
+			SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
+			SDL_RenderCopy(renderer, purpleGhost, NULL, &purpleGhostPositionPixels);
+			SDL_RenderCopy(renderer, brownGhost, NULL, &brownGhostPositionPixels);
+			SDL_RenderCopy(renderer, greenGhost, NULL, &greenGhostPositionPixels);
+			SDL_RenderCopy(renderer, yellowGhost, NULL, &yellowGhostPositionPixels);
+			SDL_RenderPresent(renderer);
+
+			//While application is running
+			while (running)
+			{
+				while (SDL_PollEvent(&e) != 0)
+				{
+					//User requests quit the application
+					if (e.type == SDL_QUIT)
+					{
+						running = false;
+					}
+				}
+
+				initializeEngine(logicMap);
+				//SDL_Delay(17);
+			}
+		
 		}
 		//Free memory allocated for logic map
 		freeMap(logicMap);
