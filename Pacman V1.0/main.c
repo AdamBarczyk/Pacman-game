@@ -381,7 +381,7 @@ void getGhostDirectionFromAngle(int** logicMap, double angle, struct coords* pos
 			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
 		} //GORA
 		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { 
-			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); 
+			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN");  
 			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
 		} //DOL
 		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { 
