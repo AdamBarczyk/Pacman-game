@@ -311,49 +311,6 @@ void moveDown(SDL_Rect* arrayPositionPixels)
 	arrayPositionPixels->h = arrayPositionPixels->h;
 }
 
-void getPacmanDirectionInNextStep(int** logicMap) //get information about direction of the next pacman's movement
-{
-	//Handling user input from keyboard
-	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
-	if (currentKeyStates[SDL_SCANCODE_LEFT])
-	{
-		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0)
-		{
-			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "LEFT");
-		}
-		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
-	}
-	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
-	{
-		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0)
-		{
-			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "RIGHT");
-		}
-		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
-	}
-	else if (currentKeyStates[SDL_SCANCODE_UP])
-	{
-		if (logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0)
-		{
-			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "UP");
-		}
-		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
-	}
-	else if (currentKeyStates[SDL_SCANCODE_DOWN])
-	{
-		if (logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0)
-		{
-			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "DOWN");
-		}
-		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
-	}
-	else
-	{
-		//Set pacman direction flag for next 32px(1 field) move on the map
-		strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP");
-	}
-}
-
 /*
 	* Sprobuj uzyc struktur do trzymania informacji o koordynatach duszkow tak jak w przypadku pacmana i w podobny sposob zaimplementuj warunek kolizji ze scianami.
 	*
@@ -378,120 +335,6 @@ void getPacmanDirectionInNextStep(int** logicMap) //get information about direct
 	*
 	*  @@@@@@@ Z NOTATNIKA PAPIEROWEGO ZOSTALO PRAKTYCZNIE NAPISAC FUNKCJE WYBIERAJACA KIERUNEK DUSZKOW I ODPALIC NAPISANE FUNKCJE W MAINIE @@@@@@@
 	*/
-
-void getGhostDirectionFromAngle(int** logicMap, double angle, struct coords* positionAtLogicMap, char* directionFlag)
-{
-	/* Ghost can not choose direction he is coming from to avoid bug with ghost moving between two fields endlessly*/
-
-	if (angle > 0 && angle <= 45)
-	{
-		/* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */
-		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); }  //PRAWO
-		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); } //GORA
-		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
-	}
-	else if (angle > 45 && angle <= 90)
-	{
-		/* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */
-		if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
-	}
-	else if (angle > 90 && angle <= 135)
-	{
-		/* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */
-		if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
-	}
-	else if ((angle > 135 && angle <= 180) || angle == -180)
-	{
-		/* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */
-		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
-	}
-	else if (angle > -180 && angle <= -135)
-	{
-		/* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */
-		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
-	}
-	else if (angle > -135 && angle <= -90)
-	{
-		/* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */
-		if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
-	}
-	else if (angle > -90 && angle <= -45)
-	{
-		/* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */
-		if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
-	}
-	else if (angle > -45 && angle <= 0)
-	{
-		/* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */
-		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); } //PRAWO
-		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); } //DOL
-		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DWON") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "UP"); }  //GORA
-		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); } //LEWO
-		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
-	}
-	//else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
-}
-
-void getGhostsDirectionInNextStep(int** logicMap) //get information about direction of the next ghost movement(every ghost)
-{
-	//variable of type double to store angle of stretch between 2 points at cartesian coordinate system
-	//(WARNING! Implemented in this program cartesian coordinate system assumes that THE GREATER THE Y, THE LOWER THE POSITION OF P(X,Y) - cartesian coordinate system for graphic) 
-	//1st quadrant of cartesian coordinate system: 0 - 90 degree
-	//2nd quadrant: 90 - 180 degree
-	//3rd quadrant: (-180) - (-90) degree
-	//4th quadrant: (-90) - 0 degree
-	double angle;
-
-	//purpleGhost
-	angle = atan2(-((double)pacmanPositionAtLogicMap.y - (double)purpleGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)purpleGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	printf("purple pos: (%d,%d)      purple angle = %f           ", purpleGhostPositionAtLogicMap.x, purpleGhostPositionAtLogicMap.y, angle);
-	getGhostDirectionFromAngle(logicMap, angle, &purpleGhostPositionAtLogicMap, purpleGhostDirectionFlag);
-	printf("--> %s\n", purpleGhostDirectionFlag);
-
-	//brownGhost
-	angle = atan2(-((double)pacmanPositionAtLogicMap.y - (double)brownGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)brownGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	//printf("brown angle = %f\n", angle);
-	getGhostDirectionFromAngle(logicMap, angle, &brownGhostPositionAtLogicMap, brownGhostDirectionFlag);
-
-	//greenGhost
-	angle = atan2(-((double)pacmanPositionAtLogicMap.y - (double)greenGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)greenGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	//printf("green angle = %f           ", angle);
-	getGhostDirectionFromAngle(logicMap, angle, &greenGhostPositionAtLogicMap, greenGhostDirectionFlag);
-
-	//yellowGhost
-	angle = atan2(-((double)pacmanPositionAtLogicMap.y - (double)yellowGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)yellowGhostPositionAtLogicMap.x)) * 180 / M_PI;
-	//printf("yellow angle = %f\n", angle);
-	getGhostDirectionFromAngle(logicMap, angle, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag);
-
-	//printf("purple pos: (%d,%d)                 ", purpleGhostPositionAtLogicMap.x, purpleGhostPositionAtLogicMap.y);
-	//printf("green pos: (%d,%d)           \n", greenGhostPositionAtLogicMap.x, greenGhostPositionAtLogicMap.y);
-}
 
 void updatePosition(int** logicMap, struct coords* positionAtLogicMap, char* directionFlag, int id)
 {
@@ -520,6 +363,263 @@ void updatePosition(int** logicMap, struct coords* positionAtLogicMap, char* dir
 		logicMap[positionAtLogicMap->y][positionAtLogicMap->x] = id;
 	}
 	else if (strcmp(directionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+}
+
+void getGhostDirectionFromAngle(int** logicMap, double angle, struct coords* positionAtLogicMap, char* directionFlag, int id)
+{
+	/* Ghost can not choose direction he is coming from to avoid bug with ghost moving between two fields endlessly*/
+
+	if (angle > 0 && angle <= 45)
+	{
+		/* 1. PRAWO --> 2. GORA --> 3. DOL --> 4. LEWO */
+		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		}  //PRAWO
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "UP"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //GORA
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //DOL
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //LEWO
+		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
+	}
+	else if (angle > 45 && angle <= 90)
+	{
+		/* 1. GORA --> 2. PRAWO --> 3. LEWO --> 4. DOL */
+		if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "UP"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		}  //GORA
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //PRAWO
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //LEWO
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //DOL
+		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
+	}
+	else if (angle > 90 && angle <= 135)
+	{
+		/* 1. GORA --> 2. LEWO --> 3. PRAWO --> 4. DOL */
+		if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "UP"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		}  //GORA
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //LEWO
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //PRAWO
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //DOL
+		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
+	}
+	else if ((angle > 135 && angle <= 180) || angle == -180)
+	{
+		/* 1. LEWO --> 2. GORA --> 3. DOL --> 4. PRAWO */
+		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //LEWO
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "UP"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		}  //GORA
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //DOL
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //PRAWO
+		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
+	}
+	else if (angle > -180 && angle <= -135)
+	{
+		/* 1. LEWO --> 2. DOL --> 3. GORA --> 4. PRAWO */
+		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //LEWO
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //DOL
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "UP"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		}  //GORA
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //PRAWO
+		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
+	}
+	else if (angle > -135 && angle <= -90)
+	{
+		/* 1. DOL --> 2. LEWO --> 3. PRAWO --> GORA */
+		if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //DOL
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //LEWO
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //PRAWO
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "UP"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		}  //GORA
+		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
+	}
+	else if (angle > -90 && angle <= -45)
+	{
+		/* 1. DOL --> 2. PRAWO --> 3. LEWO --> GORA */
+		if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //DOL
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //PRAWO
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //LEWO
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DOWN") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "UP"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		}  //GORA
+		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
+	}
+	else if (angle > -45 && angle <= 0)
+	{
+		/* 1. PRAWO --> 2. DOL --> 3. GORA --> 4. LEWO */
+		if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x + 1] == 0 && strcmp(directionFlag, "LEFT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "RIGHT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //PRAWO
+		else if (logicMap[positionAtLogicMap->y + 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "UP") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "DOWN"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //DOL
+		else if (logicMap[positionAtLogicMap->y - 1][positionAtLogicMap->x] == 0 && strcmp(directionFlag, "DWON") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "UP"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		}  //GORA
+		else if (logicMap[positionAtLogicMap->y][positionAtLogicMap->x - 1] == 0 && strcmp(directionFlag, "RIGHT") != 0) { 
+			strcpy_s(directionFlag, 6 * sizeof(char), "LEFT"); 
+			updatePosition(logicMap, positionAtLogicMap, directionFlag, id);
+		} //LEWO
+		else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
+	}
+	//else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
+}
+
+void getPacmanDirectionInNextStep(int** logicMap) //get information about direction of the next pacman's move and update position to position after this move
+{
+	//Handling user input from keyboard
+	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+	if (currentKeyStates[SDL_SCANCODE_LEFT])
+	{
+		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 0)
+		{
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "LEFT");
+			updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);  //9 = pacman
+		}
+		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
+	}
+	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
+	{
+		if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 0)
+		{
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "RIGHT");
+			updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);  //9 = pacman
+		}
+		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
+	}
+	else if (currentKeyStates[SDL_SCANCODE_UP])
+	{
+		if (logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 0)
+		{
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "UP");
+			updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);  //9 = pacman
+		}
+		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
+	}
+	else if (currentKeyStates[SDL_SCANCODE_DOWN])
+	{
+		if (logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 0)
+		{
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "DOWN");
+			updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);  //9 = pacman
+		}
+		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
+	}
+	else
+	{
+		//Set pacman direction flag for next 32px(1 field) move on the map
+		strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP");
+	}
+}
+
+void getGhostsDirectionInNextStep(int** logicMap) //get information about direction of the next ghost movement(every ghost)
+{
+	//variable of type double to store angle of stretch between 2 points at cartesian coordinate system
+	//(WARNING! Implemented in this program cartesian coordinate system assumes that THE GREATER THE Y, THE LOWER THE POSITION OF P(X,Y) - cartesian coordinate system for graphic) 
+	//1st quadrant of cartesian coordinate system: 0 - 90 degree
+	//2nd quadrant: 90 - 180 degree
+	//3rd quadrant: (-180) - (-90) degree
+	//4th quadrant: (-90) - 0 degree
+	double angle;
+
+	//purpleGhost
+	angle = atan2(-((double)pacmanPositionAtLogicMap.y - (double)purpleGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)purpleGhostPositionAtLogicMap.x)) * 180 / M_PI;
+	printf("purple pos: (%d,%d)      purple angle = %f           ", purpleGhostPositionAtLogicMap.x, purpleGhostPositionAtLogicMap.y, angle);
+	getGhostDirectionFromAngle(logicMap, angle, &purpleGhostPositionAtLogicMap, purpleGhostDirectionFlag, 2);
+	printf("--> %s\n", purpleGhostDirectionFlag);
+
+	//brownGhost
+	angle = atan2(-((double)pacmanPositionAtLogicMap.y - (double)brownGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)brownGhostPositionAtLogicMap.x)) * 180 / M_PI;
+	//printf("brown angle = %f\n", angle);
+	getGhostDirectionFromAngle(logicMap, angle, &brownGhostPositionAtLogicMap, brownGhostDirectionFlag, 3);
+
+	//greenGhost
+	angle = atan2(-((double)pacmanPositionAtLogicMap.y - (double)greenGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)greenGhostPositionAtLogicMap.x)) * 180 / M_PI;
+	//printf("green angle = %f           ", angle);
+	getGhostDirectionFromAngle(logicMap, angle, &greenGhostPositionAtLogicMap, greenGhostDirectionFlag, 4);
+
+	//yellowGhost
+	angle = atan2(-((double)pacmanPositionAtLogicMap.y - (double)yellowGhostPositionAtLogicMap.y), ((double)pacmanPositionAtLogicMap.x - (double)yellowGhostPositionAtLogicMap.x)) * 180 / M_PI;
+	//printf("yellow angle = %f\n", angle);
+	getGhostDirectionFromAngle(logicMap, angle, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag, 5);
+
+	//printf("purple pos: (%d,%d)                 ", purpleGhostPositionAtLogicMap.x, purpleGhostPositionAtLogicMap.y);
+	//printf("green pos: (%d,%d)           \n", greenGhostPositionAtLogicMap.x, greenGhostPositionAtLogicMap.y);
 }
 
 void initializeEngine(int** logicMap) //get info about next step of everything on the map and do this step (DOESN'T UPDATE INFO ABOUT ELEMENT'S POSITION ON THE LOGIC MAP!)
@@ -595,11 +695,11 @@ void initializeEngine(int** logicMap) //get info about next step of everything o
 	printf("[%d,%d]=%d; \n", pacmanPositionAtLogicMap.x + 1, pacmanPositionAtLogicMap.y, logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1]);*/
 
 	//update position of pacman and ghosts on the logical map
-	updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);
-	updatePosition(logicMap, &purpleGhostPositionAtLogicMap, purpleGhostDirectionFlag, 2);
-	updatePosition(logicMap, &brownGhostPositionAtLogicMap, brownGhostDirectionFlag, 3);
-	updatePosition(logicMap, &greenGhostPositionAtLogicMap, greenGhostDirectionFlag, 4);
-	updatePosition(logicMap, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag, 5);
+	//updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);
+	//updatePosition(logicMap, &purpleGhostPositionAtLogicMap, purpleGhostDirectionFlag, 2);
+	//updatePosition(logicMap, &brownGhostPositionAtLogicMap, brownGhostDirectionFlag, 3);
+	//updatePosition(logicMap, &greenGhostPositionAtLogicMap, greenGhostDirectionFlag, 4);
+	//updatePosition(logicMap, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag, 5);
 }
 
 int main(int argc, char* args[])
