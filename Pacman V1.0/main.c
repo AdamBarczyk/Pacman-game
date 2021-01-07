@@ -311,7 +311,7 @@ void moveDown(SDL_Rect* arrayPositionPixels)
 	arrayPositionPixels->h = arrayPositionPixels->h;
 }
 
-void initializePacmanEngine(int** logicMap) //get information about direction of the next pacman's movement
+void getPacmanDirectionInNextStep(int** logicMap) //get information about direction of the next pacman's movement
 {
 	//Handling user input from keyboard
 	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
@@ -458,7 +458,7 @@ void getGhostDirectionFromAngle(int** logicMap, double angle, struct coords* pos
 	//else { strcpy_s(directionFlag, 6 * sizeof(char), "SKIP"); } //STOP - without this statement ghosts sometimes moves through walls and changing them into road
 }
 
-void initializeGhostEngine(int** logicMap) //get information about direction of the next ghost movement(every ghost)
+void getGhostsDirectionInNextStep(int** logicMap) //get information about direction of the next ghost movement(every ghost)
 {
 	//variable of type double to store angle of stretch between 2 points at cartesian coordinate system
 	//(WARNING! Implemented in this program cartesian coordinate system assumes that THE GREATER THE Y, THE LOWER THE POSITION OF P(X,Y) - cartesian coordinate system for graphic) 
@@ -493,14 +493,14 @@ void initializeGhostEngine(int** logicMap) //get information about direction of 
 	//printf("green pos: (%d,%d)           \n", greenGhostPositionAtLogicMap.x, greenGhostPositionAtLogicMap.y);
 }
 
-void nextStepCycle(int** logicMap) //get info about next step of everything on the map and do this step (DOESN'T UPDATE INFO ABOUT ELEMENT'S POSITION ON THE LOGIC MAP!)
+void initializeEngine(int** logicMap) //get info about next step of everything on the map and do this step (DOESN'T UPDATE INFO ABOUT ELEMENT'S POSITION ON THE LOGIC MAP!)
 {
 	//Get info about next pacman step
-	initializePacmanEngine(logicMap);
+	getPacmanDirectionInNextStep(logicMap);
 
 	//Get info about next ghosts step
 	//TODO make algorithm for initializeGhostEngine() function
-	initializeGhostEngine(logicMap);
+	getGhostsDirectionInNextStep(logicMap);
 	//printf("%s: ", pacmanDirectionFlag);
 	//Move elements of the map. 8 steps: each moves elements by 4px = 8*4px = 32px = 1 (logic)field on the map
 	for (int i = 0; i < 8; i++)
@@ -724,7 +724,7 @@ int main(int argc, char* args[])
 				}
 			}
 
-			nextStepCycle(logicMap);
+			initializeEngine(logicMap);
 			//SDL_Delay(17);
 		}
 		//Free memory allocated for logic map
