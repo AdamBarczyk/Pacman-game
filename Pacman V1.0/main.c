@@ -17,8 +17,8 @@ struct coords
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
 
-//Starts up SDL and creates window
-bool init();
+//Initialize SDL and creates window
+bool initialize();
 
 //Frees media and shuts down SDL
 void close();
@@ -67,7 +67,7 @@ char greenGhostDirectionFlag[6];
 char yellowGhostDirectionFlag[6];
 
 
-bool init()
+bool initialize()
 {
 	//Initialization flag
 	bool success = true;
@@ -196,8 +196,8 @@ void renderMap(int** logicMap)
 
 SDL_Texture* loadTexture(char* path)
 {
-	//The final texture
-	SDL_Texture* newTexture = NULL;
+	//The texture to load
+	SDL_Texture* texture = NULL;
 
 	//Load image at specified path
 	SDL_Surface* loadedSurface = IMG_Load(path);
@@ -208,8 +208,8 @@ SDL_Texture* loadTexture(char* path)
 	else
 	{
 		//Create texture from loadedSurface pixels
-		newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-		if (newTexture == NULL)
+		texture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+		if (texture == NULL)
 		{
 			printf("\nTexture could not be created in loadPacman function! SourceFile: %s SDL Error: %s", path, SDL_GetError());
 		}
@@ -218,7 +218,7 @@ SDL_Texture* loadTexture(char* path)
 		SDL_FreeSurface(loadedSurface);
 	}
 
-	return newTexture;
+	return texture;
 }
 
 bool loadMedia()
@@ -704,7 +704,7 @@ void initializeEngine(int** logicMap) //get info about next step of everything o
 
 int main(int argc, char* args[])
 {
-	if (!init())
+	if (!initialize())
 	{
 		printf("\nFailed to initialize!");
 	}
