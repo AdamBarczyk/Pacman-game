@@ -493,6 +493,35 @@ void getGhostsDirectionInNextStep(int** logicMap) //get information about direct
 	//printf("green pos: (%d,%d)           \n", greenGhostPositionAtLogicMap.x, greenGhostPositionAtLogicMap.y);
 }
 
+void updatePosition(int** logicMap, struct coords* positionAtLogicMap, char* directionFlag, int id)
+{
+	if (strcmp(directionFlag, "LEFT") == 0)
+	{
+		logicMap[positionAtLogicMap->y][positionAtLogicMap->x] = 0; //Delete old yellowGhost position from logic map (0 - road)
+		positionAtLogicMap->x = positionAtLogicMap->x - 1;
+		logicMap[positionAtLogicMap->y][positionAtLogicMap->x] = id; //Set new yellowGhost position in logic map (5 - yellowGhost)
+	}
+	else if (strcmp(directionFlag, "RIGHT") == 0)
+	{
+		logicMap[positionAtLogicMap->y][positionAtLogicMap->x] = 0; //Delete old yellowGhost position from logic map (0 - road)
+		positionAtLogicMap->x = positionAtLogicMap->x + 1;
+		logicMap[positionAtLogicMap->y][positionAtLogicMap->x] = id;
+	}
+	else if (strcmp(directionFlag, "UP") == 0)
+	{
+		logicMap[positionAtLogicMap->y][positionAtLogicMap->x] = 0; //Delete old yellowGhost position from logic map (0 - road)
+		positionAtLogicMap->y = positionAtLogicMap->y - 1;
+		logicMap[positionAtLogicMap->y][positionAtLogicMap->x] = id;
+	}
+	else if (strcmp(directionFlag, "DOWN") == 0)
+	{
+		logicMap[positionAtLogicMap->y][positionAtLogicMap->x] = 0; //Delete old yellowGhost position from logic map (0 - road)
+		positionAtLogicMap->y = positionAtLogicMap->y + 1;
+		logicMap[positionAtLogicMap->y][positionAtLogicMap->x] = id;
+	}
+	else if (strcmp(directionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+}
+
 void initializeEngine(int** logicMap) //get info about next step of everything on the map and do this step (DOESN'T UPDATE INFO ABOUT ELEMENT'S POSITION ON THE LOGIC MAP!)
 {
 	//Get info about next pacman step
@@ -565,6 +594,7 @@ void initializeEngine(int** logicMap) //get info about next step of everything o
 	printf("[%d,%d]=%d; ", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y - 1, logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x]);
 	printf("[%d,%d]=%d; ", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y + 1, logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x]);
 	printf("[%d,%d]=%d; \n", pacmanPositionAtLogicMap.x + 1, pacmanPositionAtLogicMap.y, logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1]);*/
+
 	if (strcmp(pacmanDirectionFlag, "LEFT") == 0)
 	{ 
 		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 0; //Delete old pacman position from logic map (0 - road)
@@ -699,6 +729,14 @@ void initializeEngine(int** logicMap) //get info about next step of everything o
 		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 5;
 	}
 	else if (strcmp(yellowGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+
+
+	//test
+	//updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);
+	//updatePosition(logicMap, &purpleGhostPositionAtLogicMap, purpleGhostDirectionFlag, 2);
+	//updatePosition(logicMap, &brownGhostPositionAtLogicMap, brownGhostDirectionFlag, 3);
+	//updatePosition(logicMap, &greenGhostPositionAtLogicMap, greenGhostDirectionFlag, 4);
+	//updatePosition(logicMap, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag, 5);
 }
 
 int main(int argc, char* args[])
