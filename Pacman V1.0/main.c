@@ -381,7 +381,6 @@ void initializePacmanEngine(int** logicMap) //get information about direction of
 
 void getGhostDirectionFromAngle(int** logicMap, double angle, struct coords* positionAtLogicMap, char* directionFlag)
 {
-	//TODO zablokowac mozliwosc wybrania kierunku, z ktorego przybyl
 	/* Ghost can not choose direction he is coming from to avoid bug with ghost moving between two fields endlessly*/
 
 	if (angle > 0 && angle <= 45)
@@ -546,7 +545,12 @@ void nextStepCycle(int** logicMap) //get info about next step of everything on t
 		//render map
 		renderMap(logicMap);
 		//render pacman
-		SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels);
+		if (strcmp(pacmanDirectionFlag, "LEFT") == 0) { SDL_RenderCopy(renderer, pacmanOpenLeft, NULL, &pacmanPositionPixels); }
+		else if (strcmp(pacmanDirectionFlag, "RIGHT") == 0) { SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels); }
+		else if (strcmp(pacmanDirectionFlag, "UP") == 0) { SDL_RenderCopy(renderer, pacmanOpenUp, NULL, &pacmanPositionPixels); }
+		else if (strcmp(pacmanDirectionFlag, "DOWN") == 0) { SDL_RenderCopy(renderer, pacmanOpenDown, NULL, &pacmanPositionPixels); }
+		else { SDL_RenderCopy(renderer, pacmanOpenRight, NULL, &pacmanPositionPixels); }
+		
 		//render all ghosts
 		SDL_RenderCopy(renderer, purpleGhost, NULL, &purpleGhostPositionPixels);
 		SDL_RenderCopy(renderer, brownGhost, NULL, &brownGhostPositionPixels);
