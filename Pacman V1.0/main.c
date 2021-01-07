@@ -588,155 +588,18 @@ void initializeEngine(int** logicMap) //get info about next step of everything o
 		SDL_RenderPresent(renderer);
 	}
 
-	//Update pacman position
 	/*printf("%d, %d", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y);
 	printf(" [%d,%d]=%d; ", pacmanPositionAtLogicMap.x - 1, pacmanPositionAtLogicMap.y, logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1]);
 	printf("[%d,%d]=%d; ", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y - 1, logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x]);
 	printf("[%d,%d]=%d; ", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y + 1, logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x]);
 	printf("[%d,%d]=%d; \n", pacmanPositionAtLogicMap.x + 1, pacmanPositionAtLogicMap.y, logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1]);*/
 
-	if (strcmp(pacmanDirectionFlag, "LEFT") == 0)
-	{ 
-		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 0; //Delete old pacman position from logic map (0 - road)
-		pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x - 1;
-		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 9; //Set new pacman position in logic map (9 - pacman)
-	}
-	else if (strcmp(pacmanDirectionFlag, "RIGHT") == 0)
-	{ 
-		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 0; //Delete old pacman position from logic map (0 - road)
-		pacmanPositionAtLogicMap.x = pacmanPositionAtLogicMap.x + 1;
-		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 9;
-	}
-	else if (strcmp(pacmanDirectionFlag, "UP") == 0)
-	{ 
-		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 0; //Delete old pacman position from logic map (0 - road)
-		pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y - 1; 
-		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 9;
-	}
-	else if (strcmp(pacmanDirectionFlag, "DOWN") == 0)
-	{
-		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 0; //Delete old pacman position from logic map (0 - road)
-		pacmanPositionAtLogicMap.y = pacmanPositionAtLogicMap.y + 1;
-		logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x] = 9;
-	}
-	else if (strcmp(pacmanDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
-
-	//Update purpleGhost
-	//printf("%d, %d\n", purpleGhostPositionAtLogicMap.x, purpleGhostPositionAtLogicMap.y);
-	if (strcmp(purpleGhostDirectionFlag, "LEFT") == 0)
-	{ 
-		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 0; //Delete old purpleGhost position from logic map (0 - road)
-		purpleGhostPositionAtLogicMap.x = purpleGhostPositionAtLogicMap.x - 1;
-		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 2; //Set new purpleGhost position in logic map (2 - purpleGhost)
-	}
-	else if (strcmp(purpleGhostDirectionFlag, "RIGHT") == 0)
-	{ 
-		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 0; //Delete old purpleGhost position from logic map (0 - road)
-		purpleGhostPositionAtLogicMap.x = purpleGhostPositionAtLogicMap.x + 1;
-		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 2;
-	}
-	else if (strcmp(purpleGhostDirectionFlag, "UP") == 0)
-	{ 
-		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 0; //Delete old purpleGhost position from logic map (0 - road)
-		purpleGhostPositionAtLogicMap.y = purpleGhostPositionAtLogicMap.y - 1;
-		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 2;
-	}
-	else if (strcmp(purpleGhostDirectionFlag, "DOWN") == 0)
-	{ 
-		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 0; //Delete old purpleGhost position from logic map (0 - road)
-		purpleGhostPositionAtLogicMap.y = purpleGhostPositionAtLogicMap.y + 1;
-		logicMap[purpleGhostPositionAtLogicMap.y][purpleGhostPositionAtLogicMap.x] = 2;
-	}
-	else if (strcmp(purpleGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
-
-	//Update brownGhost
-	if (strcmp(brownGhostDirectionFlag, "LEFT") == 0)
-	{
-		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x] = 0; //Delete old brownGhost position from logic map (0 - road)
-		brownGhostPositionAtLogicMap.x = brownGhostPositionAtLogicMap.x - 1;
-		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x] = 3; //Set new brownGhost position in logic map (3 - brownGhost)
-	}
-	else if (strcmp(brownGhostDirectionFlag, "RIGHT") == 0)
-	{
-		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x] = 0; //Delete old brownGhost position from logic map (0 - road)
-		brownGhostPositionAtLogicMap.x = brownGhostPositionAtLogicMap.x + 1;
-		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x] = 3;
-	}
-	else if (strcmp(brownGhostDirectionFlag, "UP") == 0)
-	{
-		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x] = 0; //Delete old brownGhost position from logic map (0 - road)
-		brownGhostPositionAtLogicMap.y = brownGhostPositionAtLogicMap.y - 1;
-		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x] = 3;
-	}
-	else if (strcmp(brownGhostDirectionFlag, "DOWN") == 0)
-	{
-		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x] = 0; //Delete old brownGhost position from logic map (0 - road)
-		brownGhostPositionAtLogicMap.y = brownGhostPositionAtLogicMap.y + 1;
-		logicMap[brownGhostPositionAtLogicMap.y][brownGhostPositionAtLogicMap.x] = 3;
-	}
-	else if (strcmp(brownGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
-
-	//Update greenGhost
-	if (strcmp(greenGhostDirectionFlag, "LEFT") == 0)
-	{
-		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x] = 0; //Delete old greenGhost position from logic map (0 - road)
-		greenGhostPositionAtLogicMap.x = greenGhostPositionAtLogicMap.x - 1;
-		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x] = 4; //Set new greenGhost position in logic map (4 - greenGhost)
-	}
-	else if (strcmp(greenGhostDirectionFlag, "RIGHT") == 0)
-	{
-		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x] = 0; //Delete old greenGhost position from logic map (0 - road)
-		greenGhostPositionAtLogicMap.x = greenGhostPositionAtLogicMap.x + 1;
-		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x] = 4;
-	}
-	else if (strcmp(greenGhostDirectionFlag, "UP") == 0)
-	{
-		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x] = 0; //Delete old greenGhost position from logic map (0 - road)
-		greenGhostPositionAtLogicMap.y = greenGhostPositionAtLogicMap.y - 1;
-		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x] = 4;
-	}
-	else if (strcmp(greenGhostDirectionFlag, "DOWN") == 0)
-	{
-		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x] = 0; //Delete old greenGhost position from logic map (0 - road)
-		greenGhostPositionAtLogicMap.y = greenGhostPositionAtLogicMap.y + 1;
-		logicMap[greenGhostPositionAtLogicMap.y][greenGhostPositionAtLogicMap.x] = 4;
-	}
-	else if (strcmp(greenGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
-
-	//Update yellowGhost
-	if (strcmp(yellowGhostDirectionFlag, "LEFT") == 0)
-	{
-		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 0; //Delete old yellowGhost position from logic map (0 - road)
-		yellowGhostPositionAtLogicMap.x = yellowGhostPositionAtLogicMap.x - 1;
-		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 5; //Set new yellowGhost position in logic map (5 - yellowGhost)
-	}
-	else if (strcmp(yellowGhostDirectionFlag, "RIGHT") == 0)
-	{
-		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 0; //Delete old yellowGhost position from logic map (0 - road)
-		yellowGhostPositionAtLogicMap.x = yellowGhostPositionAtLogicMap.x + 1;
-		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 5;
-	}
-	else if (strcmp(yellowGhostDirectionFlag, "UP") == 0)
-	{
-		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 0; //Delete old yellowGhost position from logic map (0 - road)
-		yellowGhostPositionAtLogicMap.y = yellowGhostPositionAtLogicMap.y - 1;
-		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 5;
-	}
-	else if (strcmp(yellowGhostDirectionFlag, "DOWN") == 0)
-	{
-		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 0; //Delete old yellowGhost position from logic map (0 - road)
-		yellowGhostPositionAtLogicMap.y = yellowGhostPositionAtLogicMap.y + 1;
-		logicMap[yellowGhostPositionAtLogicMap.y][yellowGhostPositionAtLogicMap.x] = 5;
-	}
-	else if (strcmp(yellowGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
-
-
-	//test
-	//updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);
-	//updatePosition(logicMap, &purpleGhostPositionAtLogicMap, purpleGhostDirectionFlag, 2);
-	//updatePosition(logicMap, &brownGhostPositionAtLogicMap, brownGhostDirectionFlag, 3);
-	//updatePosition(logicMap, &greenGhostPositionAtLogicMap, greenGhostDirectionFlag, 4);
-	//updatePosition(logicMap, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag, 5);
+	//update position of pacman and ghosts on the logical map
+	updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);
+	updatePosition(logicMap, &purpleGhostPositionAtLogicMap, purpleGhostDirectionFlag, 2);
+	updatePosition(logicMap, &brownGhostPositionAtLogicMap, brownGhostDirectionFlag, 3);
+	updatePosition(logicMap, &greenGhostPositionAtLogicMap, greenGhostDirectionFlag, 4);
+	updatePosition(logicMap, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag, 5);
 }
 
 int main(int argc, char* args[])
