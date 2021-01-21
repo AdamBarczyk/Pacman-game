@@ -146,6 +146,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="brown_ghost.png" />
+    <Image Include="GameOver.png" />
+    <Image Include="GameOverRetry.png" />
     <Image Include="green_ghost.png" />
     <Image Include="pacman_closed_down.png" />
     <Image Include="pacman_closed_left.png" />

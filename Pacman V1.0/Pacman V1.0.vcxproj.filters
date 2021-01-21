@@ -56,5 +56,11 @@
     <Image Include="yellow_ghost.png">
       <Filter>Pliki zasobów</Filter>
     </Image>
+    <Image Include="GameOverRetry.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="GameOver.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
   </ItemGroup>
 </Project>

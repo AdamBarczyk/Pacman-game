@@ -45,6 +45,13 @@ SDL_Texture* brownGhost = NULL;
 SDL_Texture* greenGhost = NULL;
 SDL_Texture* yellowGhost = NULL;
 
+//Other textures
+SDL_Texture* gameOverScreen = NULL;
+SDL_Texture* startScreen = NULL;
+
+//Other textures positions on screen
+SDL_Rect gameOverScreenPosition = { 361, 283, 300, 200 };
+
 //Pacman position
 SDL_Rect pacmanPositionPixels = {15*32, 11*32, 32, 32};
 struct coords pacmanPositionAtLogicMap = { 15,11 };
@@ -247,6 +254,9 @@ bool loadMedia()
 	greenGhost = loadTexture("green_ghost.png");
 	yellowGhost = loadTexture("yellow_ghost.png");
 
+	//Loading other textures
+	gameOverScreen = loadTexture("GameOver.png");
+
 	SDL_Texture* allTextures[] = 
 	{
 		pacmanClosedLeft,
@@ -260,7 +270,8 @@ bool loadMedia()
 		purpleGhost,
 		brownGhost,
 		greenGhost,
-		yellowGhost
+		yellowGhost,
+		gameOverScreen
 	};
 
 	for (int i = 0; i < 8; i++)
@@ -558,7 +569,14 @@ void getPacmanDirectionInNextStep(int** logicMap) //get information about direct
 			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "LEFT");
 			updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);  //9 = pacman
 		}
-		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
+		else if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1] == 1) {
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP");
+		}
+		else
+		{
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "LEFT");
+			gameOver = true;
+		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
 	{
@@ -567,7 +585,14 @@ void getPacmanDirectionInNextStep(int** logicMap) //get information about direct
 			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "RIGHT");
 			updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);  //9 = pacman
 		}
-		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
+		else if (logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 1) {
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP");
+		}
+		else
+		{
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "RIGHT");
+			gameOver = true;
+		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_UP])
 	{
@@ -576,7 +601,14 @@ void getPacmanDirectionInNextStep(int** logicMap) //get information about direct
 			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "UP");
 			updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);  //9 = pacman
 		}
-		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
+		else if (logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x] == 1) {
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP");
+		}
+		else
+		{
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "UP");
+			gameOver = true;
+		}
 	}
 	else if (currentKeyStates[SDL_SCANCODE_DOWN])
 	{
@@ -585,7 +617,14 @@ void getPacmanDirectionInNextStep(int** logicMap) //get information about direct
 			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "DOWN");
 			updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);  //9 = pacman
 		}
-		else { strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP"); }
+		else if (logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x] == 1) {
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "SKIP");
+		}
+		else
+		{
+			strcpy_s(pacmanDirectionFlag, 6 * sizeof(char), "DOWN");
+			gameOver = true;
+		}
 	}
 	else
 	{
@@ -714,6 +753,17 @@ void initializeEngine(int** logicMap) //get info about next step of everything o
 	//updatePosition(logicMap, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag, 5);
 }
 
+bool spacePressed()
+{
+	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+	if (currentKeyStates[SDL_SCANCODE_SPACE]) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 int main(int argc, char* args[])
 {
 	if (!initialize())
@@ -756,14 +806,23 @@ int main(int argc, char* args[])
 					}
 				}
 
-				initializeEngine(logicMap);
-				//SDL_Delay(17);
-
-				if (skipGhostsMove) {
-					skipGhostsMove = false;
+				//test
+				if (gameOver)
+				{
+					SDL_RenderCopy(renderer, gameOverScreen, NULL, &gameOverScreenPosition);
+					SDL_RenderPresent(renderer);
 				}
-				else {
-					skipGhostsMove = true;
+				else
+				{
+					initializeEngine(logicMap);
+					//SDL_Delay(17);
+
+					if (skipGhostsMove) {
+						skipGhostsMove = false;
+					}
+					else {
+						skipGhostsMove = true;
+					}
 				}
 			}
 		
