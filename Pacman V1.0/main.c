@@ -66,6 +66,11 @@ char brownGhostDirectionFlag[6];
 char greenGhostDirectionFlag[6];
 char yellowGhostDirectionFlag[6];
 
+//Flag for slowing down ghosts
+bool skipGhostsMove = true;
+
+//Flag for run gameOver function
+bool gameOver = false;
 
 bool initialize()
 {
@@ -147,7 +152,7 @@ int** generateMap()
 		{1,0,1,0,1,1,1,1,1,0,1,1,0,1,0,0,0,0,1,0,1,1,0,1,1,1,1,1,0,1,0,1},
 		{1,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,1,0,0,0,0,0,1},
 		{1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1},
-		{1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1,0,1,0,1},
+		{1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,9,0,0,0,0,0,1,0,1,0,0,0,1,0,1,0,1},
 		{1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1},
 		{1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,1},
 		{1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1},
@@ -368,6 +373,8 @@ void updatePosition(int** logicMap, struct coords* positionAtLogicMap, char* dir
 void getGhostDirectionFromAngle(int** logicMap, double angle, struct coords* positionAtLogicMap, char* directionFlag, int id)
 {
 	/* Ghost can not choose direction he is coming from to avoid bug with ghost moving between two fields endlessly*/
+
+	/* Collision it's all about current posisions at logic map. If the ghosts sees '0' value in logicMap, then he can go there */
 
 	if (angle > 0 && angle <= 45)
 	{
@@ -628,8 +635,10 @@ void initializeEngine(int** logicMap) //get info about next step of everything o
 	getPacmanDirectionInNextStep(logicMap);
 
 	//Get info about next ghosts step
-	//TODO make algorithm for initializeGhostEngine() function
-	getGhostsDirectionInNextStep(logicMap);
+	if (!skipGhostsMove)
+	{
+		getGhostsDirectionInNextStep(logicMap);
+	}
 	//printf("%s: ", pacmanDirectionFlag);
 	//Move elements of the map. 8 steps: each moves elements by 4px = 8*4px = 32px = 1 (logic)field on the map
 	for (int i = 0; i < 8; i++)
@@ -642,33 +651,36 @@ void initializeEngine(int** logicMap) //get info about next step of everything o
 		else if (strcmp(pacmanDirectionFlag, "DOWN") == 0) { moveDown(&pacmanPositionPixels); }
 		else if (strcmp(pacmanDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
 
-		//move purpleGhost
-		if (strcmp(purpleGhostDirectionFlag, "LEFT") == 0) { moveLeft(&purpleGhostPositionPixels); }
-		else if (strcmp(purpleGhostDirectionFlag, "RIGHT") == 0) { moveRight(&purpleGhostPositionPixels); }
-		else if (strcmp(purpleGhostDirectionFlag, "UP") == 0) { moveUp(&purpleGhostPositionPixels); }
-		else if (strcmp(purpleGhostDirectionFlag, "DOWN") == 0) { moveDown(&purpleGhostPositionPixels); }
-		else if (strcmp(purpleGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+		if (i%2 == 0)
+		{
+			//move purpleGhost
+			if (strcmp(purpleGhostDirectionFlag, "LEFT") == 0) { moveLeft(&purpleGhostPositionPixels); }
+			else if (strcmp(purpleGhostDirectionFlag, "RIGHT") == 0) { moveRight(&purpleGhostPositionPixels); }
+			else if (strcmp(purpleGhostDirectionFlag, "UP") == 0) { moveUp(&purpleGhostPositionPixels); }
+			else if (strcmp(purpleGhostDirectionFlag, "DOWN") == 0) { moveDown(&purpleGhostPositionPixels); }
+			else if (strcmp(purpleGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
 
-		//move brownGhost
-		if (strcmp(brownGhostDirectionFlag, "LEFT") == 0) { moveLeft(&brownGhostPositionPixels); }
-		else if (strcmp(brownGhostDirectionFlag, "RIGHT") == 0) { moveRight(&brownGhostPositionPixels); }
-		else if (strcmp(brownGhostDirectionFlag, "UP") == 0) { moveUp(&brownGhostPositionPixels); }
-		else if (strcmp(brownGhostDirectionFlag, "DOWN") == 0) { moveDown(&brownGhostPositionPixels); }
-		else if (strcmp(brownGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+			//move brownGhost
+			if (strcmp(brownGhostDirectionFlag, "LEFT") == 0) { moveLeft(&brownGhostPositionPixels); }
+			else if (strcmp(brownGhostDirectionFlag, "RIGHT") == 0) { moveRight(&brownGhostPositionPixels); }
+			else if (strcmp(brownGhostDirectionFlag, "UP") == 0) { moveUp(&brownGhostPositionPixels); }
+			else if (strcmp(brownGhostDirectionFlag, "DOWN") == 0) { moveDown(&brownGhostPositionPixels); }
+			else if (strcmp(brownGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
 
-		//move greenGhost
-		if (strcmp(greenGhostDirectionFlag, "LEFT") == 0) { moveLeft(&greenGhostPositionPixels); }
-		else if (strcmp(greenGhostDirectionFlag, "RIGHT") == 0) { moveRight(&greenGhostPositionPixels); }
-		else if (strcmp(greenGhostDirectionFlag, "UP") == 0) { moveUp(&greenGhostPositionPixels); }
-		else if (strcmp(greenGhostDirectionFlag, "DOWN") == 0) { moveDown(&greenGhostPositionPixels); }
-		else if (strcmp(greenGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+			//move greenGhost
+			if (strcmp(greenGhostDirectionFlag, "LEFT") == 0) { moveLeft(&greenGhostPositionPixels); }
+			else if (strcmp(greenGhostDirectionFlag, "RIGHT") == 0) { moveRight(&greenGhostPositionPixels); }
+			else if (strcmp(greenGhostDirectionFlag, "UP") == 0) { moveUp(&greenGhostPositionPixels); }
+			else if (strcmp(greenGhostDirectionFlag, "DOWN") == 0) { moveDown(&greenGhostPositionPixels); }
+			else if (strcmp(greenGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
 
-		//move yellowGhost
-		if (strcmp(yellowGhostDirectionFlag, "LEFT") == 0) { moveLeft(&yellowGhostPositionPixels); }
-		else if (strcmp(yellowGhostDirectionFlag, "RIGHT") == 0) { moveRight(&yellowGhostPositionPixels); }
-		else if (strcmp(yellowGhostDirectionFlag, "UP") == 0) { moveUp(&yellowGhostPositionPixels); }
-		else if (strcmp(yellowGhostDirectionFlag, "DOWN") == 0) { moveDown(&yellowGhostPositionPixels); }
-		else if (strcmp(yellowGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+			//move yellowGhost
+			if (strcmp(yellowGhostDirectionFlag, "LEFT") == 0) { moveLeft(&yellowGhostPositionPixels); }
+			else if (strcmp(yellowGhostDirectionFlag, "RIGHT") == 0) { moveRight(&yellowGhostPositionPixels); }
+			else if (strcmp(yellowGhostDirectionFlag, "UP") == 0) { moveUp(&yellowGhostPositionPixels); }
+			else if (strcmp(yellowGhostDirectionFlag, "DOWN") == 0) { moveDown(&yellowGhostPositionPixels); }
+			else if (strcmp(yellowGhostDirectionFlag, "SKIP") == 0) { /*do nothing(?)*/ }
+		}
 
 		//render map and all moves on the map
 		//render map
@@ -746,6 +758,13 @@ int main(int argc, char* args[])
 
 				initializeEngine(logicMap);
 				//SDL_Delay(17);
+
+				if (skipGhostsMove) {
+					skipGhostsMove = false;
+				}
+				else {
+					skipGhostsMove = true;
+				}
 			}
 		
 		}
