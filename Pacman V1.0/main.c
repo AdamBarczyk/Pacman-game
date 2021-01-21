@@ -327,31 +327,6 @@ void moveDown(SDL_Rect* arrayPositionPixels)
 	arrayPositionPixels->h = arrayPositionPixels->h;
 }
 
-/*
-	* Sprobuj uzyc struktur do trzymania informacji o koordynatach duszkow tak jak w przypadku pacmana i w podobny sposob zaimplementuj warunek kolizji ze scianami.
-	*
-	* Aktualizuj informacje o pozycji duszka na mapie logicznej, pomo¿e to przy wykrywaniu kolizji z pacmanem(jesli pacman wjedzie w duszka to GameOver)
-	*		-- w jednym cyklu glownej petli programu:  zapisanie informacji o zmianie pozycji duszka --> pacman chce wjechac w to miejsce --> GameOver
-	*		-- porownanie pozycji w momencie przesuniecia pacmana w prawo na zasadzie: if logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1] == 2 then GameOver  //'2' to purpleGhost na mapie logicznej
-	*
-	* Aktualizuj informacje o pozycji pacmana na mapie logicznej, pomo¿e to przy wykrywaniu kolizcji z duszkami(jeœli duszek wjedzie w pacmana to GameOver)
-	*		-- w jednym cyklu glownej petli programu(?):  zapisanie informacji o zmianie pozycji pacmana --> ktorykolwiek z duszkow chce wjechac w to miejsce --> GameOver
-	*		-- porownanie pozycji w momencie przesuniecia duszka w prawo na zasadzie: if logicMap[duszekPositionAtLogicMap.y][duszekPositionAtLogicMap.x + 1] == 9 then GameOver  //'9' to pacman na mapie logicznej
-	*
-	*
-	* 1. zmieniono funkcje od movementu w taki sposob, zeby przesuwaly texture o 4px zamiast 32px
-	* 2. zmieniono funkcje initializePacmanEngine() w taki sposob, zeby ustawiala flage kierunku dla nastepnego ruchu. Dotychczas ta funkcja wywolywala funkcje odpowiadajaca za ruch
-	* 3. zmieniono funckje od movementu w taki posob, zeby teraz przesuwaly texture o 4px, ale teraz funkcje te nie renderuja juz obrazu mapy ani textur - zmieniaja tylko dane o polozeniu
-	* 4. Dodano funkcje nextStepCycle(), ktora wywoluje funkcje initializePacmanEngine() oraz initializeGhostEngine() w celu zebrania informacji o ruchach pacmana i duszkow w nastepnym kroku(StepCycle).
-	*		Potem przesuwane sa wszystkie elementy o 4px, a nastepnie renderowany jest obraz. Dzieje sie tak 8 razy, zatem elementy przesuwaja sie o 4*8=32px lub nie przesuwaja sie wcale(jesli flaga kierunku
-	*		ktoregokolwiek z elementow byla ustawiona na "SKIP"). Ostatnim krokiem funkcji jest zaktualizowanie informacji o przesunieciu elementow na mapie logicznej.
-	* 5. Dodano funkcje getGhostDirectionFromAngle(), ktora na podstawie otrzymanego katu obliczonego w funkcji initializeGhostEngine() wybiera kierunek duszka w nastepnym ruchu w taki sposob, 
-	*		zeby duszek "gonil" pacmana. Kierunek jest zapisywany pod zmienna directionFlag(ta zmienna jest parametrem funkcji, pod ktory w czasie wywolania sa podpisywane zmienne <color>GhostDirectionFlag)
-	* 6. Wywolano funkcje nextStepCycle(&logicMap) w funkcji main()
-	*
-	*  @@@@@@@ Z NOTATNIKA PAPIEROWEGO ZOSTALO PRAKTYCZNIE NAPISAC FUNKCJE WYBIERAJACA KIERUNEK DUSZKOW I ODPALIC NAPISANE FUNKCJE W MAINIE @@@@@@@
-	*/
-
 void updatePosition(int** logicMap, struct coords* positionAtLogicMap, char* directionFlag, int id)
 {
 	if (strcmp(directionFlag, "LEFT") == 0)
@@ -770,19 +745,6 @@ void initializeEngine(int** logicMap) //get info about next step of everything o
 		SDL_RenderCopy(renderer, yellowGhost, NULL, &yellowGhostPositionPixels);
 		SDL_RenderPresent(renderer);
 	}
-
-	/*printf("%d, %d", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y);
-	printf(" [%d,%d]=%d; ", pacmanPositionAtLogicMap.x - 1, pacmanPositionAtLogicMap.y, logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x - 1]);
-	printf("[%d,%d]=%d; ", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y - 1, logicMap[pacmanPositionAtLogicMap.y - 1][pacmanPositionAtLogicMap.x]);
-	printf("[%d,%d]=%d; ", pacmanPositionAtLogicMap.x, pacmanPositionAtLogicMap.y + 1, logicMap[pacmanPositionAtLogicMap.y + 1][pacmanPositionAtLogicMap.x]);
-	printf("[%d,%d]=%d; \n", pacmanPositionAtLogicMap.x + 1, pacmanPositionAtLogicMap.y, logicMap[pacmanPositionAtLogicMap.y][pacmanPositionAtLogicMap.x + 1]);*/
-
-	//update position of pacman and ghosts on the logical map
-	//updatePosition(logicMap, &pacmanPositionAtLogicMap, pacmanDirectionFlag, 9);
-	//updatePosition(logicMap, &purpleGhostPositionAtLogicMap, purpleGhostDirectionFlag, 2);
-	//updatePosition(logicMap, &brownGhostPositionAtLogicMap, brownGhostDirectionFlag, 3);
-	//updatePosition(logicMap, &greenGhostPositionAtLogicMap, greenGhostDirectionFlag, 4);
-	//updatePosition(logicMap, &yellowGhostPositionAtLogicMap, yellowGhostDirectionFlag, 5);
 }
 
 bool spacePressed()
